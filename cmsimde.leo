@@ -2012,9 +2012,11 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 
     outstring += '''
 &lt;script src="/static/jquery.js"&gt;&lt;/script&gt;
-&lt;!-- for wink3 --&gt;
+&lt;!-- for wink3 客製化關閉--&gt;
+&lt;!--
 &lt;link rel="stylesheet" type="text/css" href="/static/winkPlayer.css" /&gt;
 &lt;script type="text/javascript" src="/static/winkPlayer.js"&gt;&lt;/script&gt;
+--&gt;
 &lt;script type="text/javascript"&gt;
 $(function(){
     $("ul.topmenu&gt; li:has(ul) &gt; a").append('&lt;div class="arrow-right"&gt;&lt;/div&gt;');
@@ -2111,9 +2113,11 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         &lt;script src="tipuesearch_content.js"&gt;&lt;/script&gt;
         &lt;link rel="stylesheet" href="./../cmsimde/static/tipuesearch/css/tipuesearch.css"&gt;
         &lt;script src="./../cmsimde/static/tipuesearch/tipuesearch.js"&gt;&lt;/script&gt;
-        &lt;!-- for Wink3 --&gt;
+        &lt;!-- for Wink3 客製化關閉 --&gt;
+        &lt;!--
         &lt;link rel="stylesheet" type="text/css" href="./../cmsimde/static/winkPlayer.css" /&gt;
         &lt;script type="text/javascript" src="./../cmsimde/static/winkPlayer.js"&gt;&lt;/script&gt;
+        --&gt;
         &lt;script&gt;
             /* original tipuesearch
             $(document).ready(function() {
@@ -3041,7 +3045,7 @@ config_dir = _curdir + "/config/"
 <t tx="leo.20190603204931.2">class Init(object):
     # uwsgi as static class variable, can be accessed by Init.uwsgi
     uwsgi = False
-    site_title = "FXXXTech"
+    site_title = "cmsimde_site"
     ip = "127.0.0.1"
     dynamic_port = 9443
     static_port = 8443

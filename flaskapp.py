@@ -2342,9 +2342,11 @@ def set_css():
 
     outstring += '''
 <script src="/static/jquery.js"></script>
-<!-- for wink3 -->
+<!-- for wink3 客製化關閉-->
+<!--
 <link rel="stylesheet" type="text/css" href="/static/winkPlayer.css" />
 <script type="text/javascript" src="/static/winkPlayer.js"></script>
+-->
 <script type="text/javascript">
 $(function(){
     $("ul.topmenu> li:has(ul) > a").append('<div class="arrow-right"></div>');
@@ -2440,9 +2442,11 @@ def set_css2():
         <script src="tipuesearch_content.js"></script>
         <link rel="stylesheet" href="./../cmsimde/static/tipuesearch/css/tipuesearch.css">
         <script src="./../cmsimde/static/tipuesearch/tipuesearch.js"></script>
-        <!-- for Wink3 -->
+        <!-- for Wink3 客製化關閉 -->
+        <!--
         <link rel="stylesheet" type="text/css" href="./../cmsimde/static/winkPlayer.css" />
         <script type="text/javascript" src="./../cmsimde/static/winkPlayer.js"></script>
+        -->
         <script>
             /* original tipuesearch
             $(document).ready(function() {
