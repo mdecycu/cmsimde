@@ -72,3 +72,5 @@ CATEGORIES_URL = "categories.html"
 #SHOW_ARTICLE_AUTHOR = True
 
 #MENUITEMS = [('Home', '/'), ('Archives', '/archives.html'), ('Search', '/search.html')]
+# try to avoid "WARNING: Watched path does not exist " error
+STATIC_PATHS = []
