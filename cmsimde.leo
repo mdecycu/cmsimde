@@ -17,6 +17,7 @@
 <v t="yen.20210707134934.1"><vh>202107 修改</vh>
 <v t="yen.20210710222238.1"><vh>標題特殊符號移除</vh></v>
 </v>
+<v t="leo.20220911144657.1"><vh>202209 修改</vh></v>
 </v>
 <v t="leo.20190515144242.1"><vh>@clean wsgi.py</vh>
 <v t="leo.20190515144254.1"><vh>Declarations (wsgi.py)</vh></v>
@@ -105,6 +106,9 @@
 <v t="leo.20190603205008.3"><vh>index (user.py)</vh></v>
 <v t="leo.20190603205008.4"><vh>threegear (user.py)</vh></v>
 </v>
+<v t="leo.20220911145040.1"><vh>@edit main.py</vh></v>
+<v t="leo.20220911145111.1"><vh>@edit nocache.py</vh></v>
+<v t="leo.20220911145241.1"><vh>@edit .gitignore</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -3388,6 +3392,18 @@ get_page2() 則與 get_page() 取頁面內容功能相同, 但用於將動態內
 get_page2 中的字串代換, 增加在動態與靜態網頁, 可自行擷取網站內容頁面連結
 
 尚未完成</t>
+<t tx="leo.20220911144657.1">此次修改主要針對 Replit 上執行的需求
+
+1. 將 nocache.py 複製一份, 放入 up_directory, 因為 Replit 要在根目錄中, 以 main.py 執行.
+2. main.py 讓 cmsimde 以 wsgi 模式執行, 內容如下
+
+# for replit
+from cmsimde import flaskapp
+from gevent.pywsgi import WSGIServer
+
+#flaskapp.app.run(host="0.0.0.0", debug=True)
+http_server = WSGIServer(('0.0.0.0', 8080), flaskapp.app)
+http_server.serve_forever()</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
