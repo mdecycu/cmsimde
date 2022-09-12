@@ -97,12 +97,14 @@ try:
 except:
     pass
 
+
 def password_generator(size=4, chars=string.ascii_lowercase + string.digits):
     
     """Generate random password
     """
     return ''.join(random.choice(chars) for _ in range(size))
 
+    
 # 定義 password_generator() 後就可以產生 token
 token = password_generator()
 @app.route('/checkLogin', methods=['POST'])
@@ -121,7 +123,6 @@ def checkLogin():
         return redirect('/edit_page')
     return redirect('/')
 
-
  
 def checkMath():
 
@@ -137,7 +138,8 @@ def checkMath():
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>-->
     '''
     return outstring
-    
+
+
 @app.route('/delete_file', methods=['POST'])
 def delete_file():
 
@@ -393,6 +395,7 @@ def download_list():
 
     return set_css() + "<div class='container'><nav>" + \
                directory + "</nav><section><h1>Download List</h1>" + outstring + "<br/><br /></body></html>"
+
 
 def downloadlist_access_list(files, starti, endi):
     
@@ -928,6 +931,8 @@ def generate_pages():
         f.write("var tipuesearch = {\"pages\": " + str(search_content) + "};")
     # generate each page html under content directory
     return "已經將網站轉為靜態網頁. <a href='/'>Home</a>"
+
+    
 # seperate page need heading and edit variables, if edit=1, system will enter edit mode
 # single page edit will use ssavePage to save content, it means seperate save page
 @app.route('/get_page')
@@ -1881,6 +1886,7 @@ def parse_content():
     page_list.append(cut)
     return head_list, level_list, page_list
 
+
 def render_menu(head, level, page, sitemap=0):
     
     """允許使用者在 h1 標題後直接加上 h3 標題, 或者隨後納入 h4 之後作為標題標註
@@ -1936,6 +1942,8 @@ def render_menu(head, level, page, sitemap=0):
         current_level = this_level
     directory += "</li></ul>"
     return directory
+
+
 def render_menu2(head, level, page, sitemap=0):
     
     """Render menu for static site
@@ -2067,6 +2075,8 @@ def render_menu2(head, level, page, sitemap=0):
         </header>
     '''
     return directory
+
+
 def render_menu3(head, level, page, sitemap=0):
     
     """Render menu for static sitemap
@@ -2119,6 +2129,8 @@ def render_menu3(head, level, page, sitemap=0):
         current_level = this_level
     directory += "</li></ul>"
     return directory
+
+
 @app.route('/saveConfig', methods=['POST'])
 def saveConfig():
     
@@ -2508,6 +2520,8 @@ def sitemap(edit):
     return set_css() + "<div class='container'><nav>" + directory + \
              "</nav><section><h1>Site Map</h1>" + sitemap + \
              "</section></div></body></html>"
+
+
 def sitemap2(head):
     
     """Sitemap for static content generation
@@ -2534,6 +2548,8 @@ def sizeof_fmt(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
     return "%3.1f%s" % (num, 'TB')
+
+
 @app.route('/ssavePage', methods=['POST'])
 def ssavePage():
     
@@ -2625,6 +2641,8 @@ def start_static():
     #print(os.getcwd())
     #print(static_port + " https server started")
     httpd.serve_forever()
+
+
 def syntaxhighlight():
     
     """Return syntaxhighlight needed scripts
@@ -2666,7 +2684,6 @@ img.add_border {
 }
 </style>
 '''
-
 
 
 def syntaxhighlight2():
@@ -2919,6 +2936,8 @@ def merge_sequences(seq1,seq2):
     return res
 
 '''
+
+
 def merge_sequences(list1, list2):
     
     """Merge sequences
@@ -2960,6 +2979,8 @@ def merge_sequences(list1, list2):
             merged.insert(previous and merged.index(previous) + 1 or 0, e)
     # Return the merged list
     return merged
+
+
 # replace slash n with slash r
 def snTosr(tag):
     
