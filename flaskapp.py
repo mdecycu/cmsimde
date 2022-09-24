@@ -1731,18 +1731,25 @@ def parse_config():
     
     """Parse config
     """
-    # if there is no config/config automatically generate one: admin
+    # if there is no config/config automatically generate one with content "admin"
     if not os.path.isfile(config_dir+"config"):
         # create config file if there is no config file
         # default password is admin
-        password="admin"
+        password = "admin"
         hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
         with open(config_dir + "config", "w", encoding="utf-8") as f:
             f.write(hashed_password)
+
+    # if there is no config/sitetitle automatically generate one with content "cmsimde"
+    if not os.path.isfile(config_dir+"sitetitle"):
+        # default sitetitle is "cmsimde"
+        with open(config_dir + "sitetitle", "w", encoding="utf-8") as f:
+            f.write("cmsimde")
+
     # read site_title from config/sitetitle
     site_title = file_get_contents(config_dir + "sitetitle")
     password = file_get_contents(config_dir + "config")
-    
+
     return site_title, password
 
 
