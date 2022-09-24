@@ -1731,18 +1731,18 @@ def parse_config():
     
     """Parse config
     """
-    
+    # if there is no config/config automatically generate one: admin
     if not os.path.isfile(config_dir+"config"):
         # create config file if there is no config file
         # default password is admin
         password="admin"
         hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
         with open(config_dir + "config", "w", encoding="utf-8") as f:
-            f.write("siteTitle:CMSimfly \npassword:"+hashed_password)
-    config = file_get_contents(config_dir + "config")
-    config_data = config.split("\n")
-    site_title = config_data[0].split(":")[1]
-    password = config_data[1].split(":")[1]
+            f.write(hashed_password)
+    # read site_title from config/sitetitle
+    site_title = file_get_contents(config_dir + "sitetitle")
+    password = file_get_contents(config_dir + "config")
+    
     return site_title, password
 
 
@@ -2155,8 +2155,14 @@ def saveConfig():
             hashed_password = old_password
         else:
             hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
+        # save password to config/config, sitetitle to config/sitetitle
+        # save sitetitle
+        file = open(config_dir + "sitetitle", "w", encoding="utf-8")
+        file.write(site_title)
+        file.close()
+        # save password
         file = open(config_dir + "config", "w", encoding="utf-8")
-        file.write("siteTitle:" + site_title + "\npassword:" + hashed_password)
+        file.write(hashed_password)
         file.close()
         return set_css() + "<div class='container'><nav>" + \
                  directory + "</nav><section><h1>config file saved</h1><a href='/'>Home</a></body></html>"
