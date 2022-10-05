@@ -29,6 +29,7 @@
 <v t="yen.20210708085937.1"><vh>password_generator</vh></v>
 <v t="leo.20190515144237.2"><vh>checkLogin (flaskapp.py)</vh></v>
 <v t="yen.20200710111924.1"><vh>checkMath</vh></v>
+<v t="leo.20221005075601.1"><vh>correct_url</vh></v>
 <v t="leo.20190515144237.3"><vh>delete_file (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.4"><vh>doDelete (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.5"><vh>doSearch (flaskapp.py)</vh></v>
@@ -1989,7 +1990,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/sitemap"&gt;SiteMap&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/edit_page"&gt;Edit All&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="''' + str(request.url) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="''' + str(correct_url()) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/edit_config"&gt;Config&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/search_form"&gt;Search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/imageuploadform"&gt;Image Upload&lt;/a&gt;&lt;/li&gt;
@@ -2057,7 +2058,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     if isAdmin():
         outstring += '''
 &lt;li&gt;&lt;a href="/edit_page"&gt;Edit All&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="''' + str(request.url) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="''' + str(correct_url()) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/edit_config"&gt;Config&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/search_form"&gt;Search&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/imageuploadform"&gt;image upload&lt;/a&gt;&lt;/li&gt;
@@ -2193,7 +2194,7 @@ def login():
     
     return "&lt;footer&gt; \
         &lt;a href='/edit_page'&gt;Edit All&lt;/a&gt;| \
-        &lt;a href='" + str(request.url) + "/1'&gt;Edit&lt;/a&gt;| \
+        &lt;a href='" + str(correct_url) + "/1'&gt;Edit&lt;/a&gt;| \
         &lt;a href='edit_config'&gt;Config&lt;/a&gt; \
         &lt;a href='login'&gt;login&lt;/a&gt;| \
         &lt;a href='logout'&gt;logout&lt;/a&gt; \
@@ -3440,6 +3441,18 @@ http_server.serve_forever()</t>
 <t tx="leo.20220924163559.1">目前將 site title 與 password 放在 config/config 檔案, 在此希望只將 password 保留在 config/config, 然後將 site title 的存取移出 config, 將其命名為 config/sitename
 
 處理 config/config 的 function 為 edit_config 與 saveConfig</t>
+<t tx="leo.20221005075601.1">def correct_url():
+
+    """get the correct url for http and https edit mode
+        to replace original request.url under set_admin_css, set_css and set_footer
+    """
+    url = request.url
+    if request.is_secure:
+        return url
+    else:
+        url = url.replace("http://", "https://", 1)
+        code = 301
+        return redirect(url, code=code)</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering

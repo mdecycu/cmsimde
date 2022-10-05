@@ -140,6 +140,18 @@ def checkMath():
     return outstring
 
 
+def correct_url():
+
+    """get the correct url for http and https edit mode
+        to replace original request.url under set_admin_css, set_css and set_footer
+    """
+    url = request.url
+    if request.is_secure:
+        return url
+    else:
+        url = url.replace("http://", "https://", 1)
+        code = 301
+        return redirect(url, code=code)
 @app.route('/delete_file', methods=['POST'])
 def delete_file():
 
@@ -2330,7 +2342,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 <li><a href="/">Home</a></li>
 <li><a href="/sitemap">SiteMap</a></li>
 <li><a href="/edit_page">Edit All</a></li>
-<li><a href="''' + str(request.url) + '''/1">Edit</a></li>
+<li><a href="''' + str(correct_url()) + '''/1">Edit</a></li>
 <li><a href="/edit_config">Config</a></li>
 <li><a href="/search_form">Search</a></li>
 <li><a href="/imageuploadform">Image Upload</a></li>
@@ -2397,7 +2409,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     if isAdmin():
         outstring += '''
 <li><a href="/edit_page">Edit All</a></li>
-<li><a href="''' + str(request.url) + '''/1">Edit</a></li>
+<li><a href="''' + str(correct_url()) + '''/1">Edit</a></li>
 <li><a href="/edit_config">Config</a></li>
 <li><a href="/search_form">Search</a></li>
 <li><a href="/imageuploadform">image upload</a></li>
@@ -2513,7 +2525,7 @@ def set_footer():
     
     return "<footer> \
         <a href='/edit_page'>Edit All</a>| \
-        <a href='" + str(request.url) + "/1'>Edit</a>| \
+        <a href='" + str(correct_url) + "/1'>Edit</a>| \
         <a href='edit_config'>Config</a> \
         <a href='login'>login</a>| \
         <a href='logout'>logout</a> \
