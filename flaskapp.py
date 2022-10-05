@@ -150,8 +150,7 @@ def correct_url():
         return url
     else:
         url = url.replace("http://", "https://", 1)
-        code = 301
-        return redirect(url, code=code)
+        return url
 @app.route('/delete_file', methods=['POST'])
 def delete_file():
 

@@ -3451,8 +3451,7 @@ http_server.serve_forever()</t>
         return url
     else:
         url = url.replace("http://", "https://", 1)
-        code = 301
-        return redirect(url, code=code)</t>
+        return url</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
