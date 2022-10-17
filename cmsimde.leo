@@ -2006,6 +2006,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     # under uwsgi mode no start_static and static_port anchor links
     if uwsgi != True:
         outstring += '''
+&lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static"&gt;start_static&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
@@ -2075,6 +2076,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         # only added when user login as admin
         if uwsgi != True:
             outstring += '''
+&lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static"&gt;start_static&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
