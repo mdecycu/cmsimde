@@ -20,18 +20,21 @@
 <v t="leo.20220911144657.1"><vh>202209 修改</vh>
 <v t="leo.20220924163559.1"><vh>config/config 問題</vh></v>
 </v>
+<v t="leo.20221017090940.1"><vh>202210 修改</vh></v>
 </v>
 <v t="leo.20190515144242.1"><vh>@clean wsgi.py</vh>
 <v t="leo.20190515144254.1"><vh>Declarations (wsgi.py)</vh></v>
 </v>
 <v t="leo.20190515144224.1"><vh>@clean flaskapp.py</vh>
 <v t="leo.20190515144237.1"><vh>Declarations (flaskapp.py)</vh></v>
+<v t="leo.20221017090913.1"><vh>acpForm</vh></v>
 <v t="yen.20210708085937.1"><vh>password_generator</vh></v>
 <v t="leo.20190515144237.2"><vh>checkLogin (flaskapp.py)</vh></v>
 <v t="yen.20200710111924.1"><vh>checkMath</vh></v>
 <v t="leo.20221005075601.1"><vh>correct_url</vh></v>
 <v t="leo.20190515144237.3"><vh>delete_file (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.4"><vh>doDelete (flaskapp.py)</vh></v>
+<v t="leo.20221017090933.1"><vh>doAcp</vh></v>
 <v t="leo.20190515144237.5"><vh>doSearch (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.6"><vh>download (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.7"><vh>download_list (flaskapp.py)</vh></v>
@@ -3452,6 +3455,12 @@ http_server.serve_forever()</t>
     else:
         url = url.replace("http://", "https://", 1)
         return url</t>
+<t tx="leo.20221017090913.1">
+</t>
+<t tx="leo.20221017090933.1">
+
+</t>
+<t tx="leo.20221017090940.1">add acpForm and doAcp</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering

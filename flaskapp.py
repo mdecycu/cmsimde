@@ -98,6 +98,7 @@ except:
     pass
 
 
+
 def password_generator(size=4, chars=string.ascii_lowercase + string.digits):
     
     """Generate random password
@@ -220,6 +221,8 @@ def doDelete():
     return set_css() + "<div class='container'><nav>" + \
                directory + "</nav><section><h1>Download List</h1>" + \
                outstring + "<br/><br /></body></html>"
+
+
 
 
 @app.route('/doSearch', methods=['POST'])
