@@ -3457,9 +3457,48 @@ http_server.serve_forever()</t>
     else:
         url = url.replace("http://", "https://", 1)
         return url</t>
-<t tx="leo.20221017090913.1">
-</t>
-<t tx="leo.20221017090933.1">
+<t tx="leo.20221017090913.1">@app.route('/acpform')
+def acpform():
+    
+    """acp form routine
+    """
+    head, level, page = parse_content()
+    directory = render_menu(head, level, page)
+    if not isAdmin():
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
+                 directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Login&lt;/h1&gt;&lt;form method='post' action='checkLogin'&gt; \
+                Password:&lt;input type='password' name='password'&gt; \
+    &lt;input type='submit' value='login'&gt;&lt;/form&gt; \
+    &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+    else:
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
+                 directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Acp From&lt;/h1&gt;&lt;form method='post' action='doAcp'&gt; \
+                Commit Messages:&lt;textarea name='commit' rows='1' cols='80'&gt;&lt;/textarea&gt; \
+    &lt;input type='submit' value='acp'&gt;&lt;/form&gt; \
+    &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"</t>
+<t tx="leo.20221017090933.1">@app.route('/doAcp', methods=['POST'])
+def doAcp():
+
+    """Action to search content.htm using keyword
+    """
+
+    if not isAdmin():
+        return redirect("/login")
+    else:
+        commit_messages = request.form['commit']
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+        # execute acp.bat with commit_messages
+        if os.name == 'nt':
+            os.system("acp.bat \"" + commit_messages + "\"")
+        else:
+            os.system("source acp \"" + commit_messages + "\"")
+
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;"+ \
+                   directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Acp done&lt;/h1&gt;Acp done&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+
+
+
 
 </t>
 <t tx="leo.20221017090940.1">add acpForm and doAcp</t>

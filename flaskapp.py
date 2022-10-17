@@ -98,7 +98,25 @@ except:
     pass
 
 
-
+@app.route('/acpform')
+def acpform():
+    
+    """acp form routine
+    """
+    head, level, page = parse_content()
+    directory = render_menu(head, level, page)
+    if not isAdmin():
+        return set_css() + "<div class='container'><nav>" + \
+                 directory + "</nav><section><h1>Login</h1><form method='post' action='checkLogin'> \
+                Password:<input type='password' name='password'> \
+    <input type='submit' value='login'></form> \
+    </section></div></body></html>"
+    else:
+        return set_css() + "<div class='container'><nav>" + \
+                 directory + "</nav><section><h1>Acp From</h1><form method='post' action='doAcp'> \
+                Commit Messages:<textarea name='commit' rows='1' cols='80'></textarea> \
+    <input type='submit' value='acp'></form> \
+    </section></div></body></html>"
 def password_generator(size=4, chars=string.ascii_lowercase + string.digits):
     
     """Generate random password
@@ -221,6 +239,28 @@ def doDelete():
     return set_css() + "<div class='container'><nav>" + \
                directory + "</nav><section><h1>Download List</h1>" + \
                outstring + "<br/><br /></body></html>"
+
+
+@app.route('/doAcp', methods=['POST'])
+def doAcp():
+
+    """Action to search content.htm using keyword
+    """
+
+    if not isAdmin():
+        return redirect("/login")
+    else:
+        commit_messages = request.form['commit']
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+        # execute acp.bat with commit_messages
+        if os.name == 'nt':
+            os.system("acp.bat \"" + commit_messages + "\"")
+        else:
+            os.system("source acp \"" + commit_messages + "\"")
+
+        return set_css() + "<div class='container'><nav>"+ \
+                   directory + "</nav><section><h1>Acp done</h1>Acp done</section></div></body></html>"
 
 
 
