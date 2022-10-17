@@ -257,7 +257,7 @@ def doAcp():
         if os.name == 'nt':
             os.system("acp.bat \"" + commit_messages + "\"")
         else:
-            os.system("source acp \"" + commit_messages + "\"")
+            os.system("./acp \"" + commit_messages + "\"")
 
         return set_css() + "<div class='container'><nav>"+ \
                    directory + "</nav><section><h1>Acp done</h1>Acp done</section></div></body></html>"
