@@ -918,75 +918,80 @@ def flvplayer(filepath=None):
 
 @app.route('/generate_pages')
 def generate_pages():
-    
+
     """Convert content.htm to static html files in  content directory
     """
-    
+
     # 必須決定如何處理重複標題頁面的轉檔
-    import os
     # 確定程式檔案所在目錄, 在 Windows 有最後的反斜線
     #_curdir = os.path.join(os.getcwd(), os.path.dirname(__file__))
     # 根據 content.htm 內容, 逐一產生各頁面檔案
     # 在此也要同時配合 render_menu2, 產生對應的 anchor 連結
-    head, level, page = parse_content()
-    # 處理重複標題 head 數列， 重複標題則按照次序加上 1, 2, 3...
-    newhead = []
-    for i, v in enumerate(head):
-        # 各重複標題總數
-        totalcount = head.count(v)
-        # 目前重複標題出現總數
-        count = head[:i].count(v)
-        # 針對重複標題者, 附加目前重複標題出現數 +1, 未重複採原標題
-        newhead.append(v + "-" + str(count + 1) if totalcount > 1 else v)
-    # 刪除 content 目錄中所有 html 檔案
-    filelist = [ f for f in os.listdir(_curdir + "/content/") if f.endswith(".html") ]
-    for f in filelist:
-        os.remove(os.path.join(_curdir + "/content/", f))
-    # 這裡需要建立專門寫出 html 的 write_page
-    # index.html
-    with open(_curdir + "/content/index.html", "w", encoding="utf-8") as f:
-        f.write(get_page2(None, newhead, 0))
-    # sitemap
-    with open(_curdir + "/content/sitemap.html", "w", encoding="utf-8") as f:
-        # 為了修改為動態與靜態網頁雙向轉檔, 這裡需要 newhead pickle
-        # sitemap2 需要 newhead
-        f.write(sitemap2(newhead))
-    # 以下轉檔, 改用 newhead 數列
+    # check if administrator
+    if not isAdmin():
+        return redirect('/login')
+    else:
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+        # 處理重複標題 head 數列， 重複標題則按照次序加上 1, 2, 3...
+        newhead = []
+        for i, v in enumerate(head):
+            # 各重複標題總數
+            totalcount = head.count(v)
+            # 目前重複標題出現總數
+            count = head[:i].count(v)
+            # 針對重複標題者, 附加目前重複標題出現數 +1, 未重複採原標題
+            newhead.append(v + "-" + str(count + 1) if totalcount > 1 else v)
+        # 刪除 content 目錄中所有 html 檔案
+        filelist = [ f for f in os.listdir(_curdir + "/content/") if f.endswith(".html") ]
+        for f in filelist:
+            os.remove(os.path.join(_curdir + "/content/", f))
+        # 這裡需要建立專門寫出 html 的 write_page
+        # index.html
+        with open(_curdir + "/content/index.html", "w", encoding="utf-8") as f:
+            f.write(get_page2(None, newhead, 0))
+        # sitemap
+        with open(_curdir + "/content/sitemap.html", "w", encoding="utf-8") as f:
+            # 為了修改為動態與靜態網頁雙向轉檔, 這裡需要 newhead pickle
+            # sitemap2 需要 newhead
+            f.write(sitemap2(newhead))
+        # 以下轉檔, 改用 newhead 數列
 
-    def visible(element):
-        if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
-            return False
-        elif re.match('<!--.*-->', str(element.encode('utf-8'))):
-            return False
-        return True
+        def visible(element):
+            if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
+                return False
+            elif re.match('<!--.*-->', str(element.encode('utf-8'))):
+                return False
+            return True
 
-    search_content = []
-    for i in range(len(newhead)):
-        # 在此必須要將頁面中的 /images/ 字串換為 images/, /downloads/ 換為 downloads/
-        # 因為 Flask 中靠 /images/ 取檔案, 但是一般 html 則採相對目錄取檔案
-        # 此一字串置換在 get_page2 中進行
-        # 加入 tipue search 模式
-        get_page_content = []
-        html_doc = get_page2(newhead[i], newhead, 0, get_page_content)
-        """
-        # html = "<meta property='head' content='H1'>"
-        soup = BeautifulSoup(html)
-        title = soup.find("meta", property="head")
-        print(title["content"])
-        """
-        html_doc = html_doc.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta property="head" content="H'+str(level[i])+'">')
-        soup = bs4.BeautifulSoup(" ".join(get_page_content), "lxml")
-        search_content.append({"title": newhead[i], "text": " ".join(filter(visible, soup.findAll(text=True))), "tags": "", "url": newhead[i] + ".html"})
-        with open(_curdir + "/content/" + newhead[i] + ".html", "w", encoding="utf-8") as f:
-            # 增加以 newhead 作為輸入
-            f.write(html_doc)
-    # GENERATE js file
-    with open(_curdir + "/content/tipuesearch_content.js", "w", encoding="utf-8") as f:
-        f.write("var tipuesearch = {\"pages\": " + str(search_content) + "};")
-    # generate each page html under content directory
-    return "已經將網站轉為靜態網頁. <a href='/'>Home</a>"
-
-    
+        search_content = []
+        # generate each page html under content directory
+        for i in range(len(newhead)):
+            # 在此必須要將頁面中的 /images/ 字串換為 images/, /downloads/ 換為 downloads/
+            # 因為 Flask 中靠 /images/ 取檔案, 但是一般 html 則採相對目錄取檔案
+            # 此一字串置換在 get_page2 中進行
+            # 加入 tipue search 模式
+            get_page_content = []
+            html_doc = get_page2(newhead[i], newhead, 0, get_page_content)
+            """
+            # html = "<meta property='head' content='H1'>"
+            soup = BeautifulSoup(html)
+            title = soup.find("meta", property="head")
+            print(title["content"])
+            """
+            html_doc = html_doc.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta property="head" content="H'+str(level[i])+'">')
+            soup = bs4.BeautifulSoup(" ".join(get_page_content), "lxml")
+            search_content.append({"title": newhead[i], "text": " ".join(filter(visible, soup.findAll(text=True))), "tags": "", "url": newhead[i] + ".html"})
+            with open(_curdir + "/content/" + newhead[i] + ".html", "w", encoding="utf-8") as f:
+                # 增加以 newhead 作為輸入
+                f.write(html_doc)
+        # GENERATE js file
+        with open(_curdir + "/content/tipuesearch_content.js", "w", encoding="utf-8") as f:
+            f.write("var tipuesearch = {\"pages\": " + str(search_content) + "};")
+        return set_css() + "<div class='container'><nav>" + \
+                     directory + "</nav><section><h1>Generate Pages</h1>" + \
+                     "已經將網站轉為靜態網頁!" + \
+                     "</section></div></body></html>"
 # seperate page need heading and edit variables, if edit=1, system will enter edit mode
 # single page edit will use ssavePage to save content, it means seperate save page
 @app.route('/get_page')
