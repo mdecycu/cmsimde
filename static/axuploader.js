@@ -8,7 +8,83 @@
  *
  * 
  */
-// 2013.08.21 Yen modified Chrome file append error
+// 2013.08.21 Yen corrected Chrome file append error
+//2023.04.27 Yen add the resizeImage before uploading
+
+/* by using this, can not get the new file name
+function resizeImage(file, maxWidth, callback) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            var ratio = Math.min(maxWidth / img.width);
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(callback);
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+}
+*/
+
+// Function to resize an image
+function resizeImage(file, maxWidth, callback) {
+  // Create a new FileReader object
+  const reader = new FileReader();
+
+  // Add an event listener to the FileReader object that listens for when the file is loaded
+  reader.addEventListener("load", () => {
+    // Create a new image object
+    const img = new Image();
+
+      // Add an event listener to the image object that listens for when the image is loaded
+      img.addEventListener("load", () => {
+      var ratio = Math.min(maxWidth / img.width);
+      // Create a new canvas object
+      const canvas = document.createElement("canvas");
+
+      // Set the canvas width and height to the new width and height of the image
+	  canvas.width = img.width * ratio;
+	  canvas.height = img.height * ratio;
+
+      // Draw the image onto the canvas with the new width and height
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Convert the canvas to a data URL
+      const dataUrl = canvas.toDataURL("image/jpeg");
+
+      // Create a new file object from the data URL
+      const resizedFile = dataURLtoFile(dataUrl, file.name);
+
+      // Return the resized file
+      callback(resizedFile);
+    });
+
+    // Set the source of the image object to the data URL of the file
+    img.src = reader.result;
+  });
+
+  // Read the file as a data URL
+  reader.readAsDataURL(file);
+}
+
+// Function to convert a data URL to a file object
+function dataURLtoFile(dataUrl, filename) {
+  const arr = dataUrl.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
 
 (function($)
 {
@@ -39,7 +115,7 @@
 				if(options)	$.extend(settings,options);
 				var allowExt=settings.allowExt.join('|').toLowerCase();
 
-/*================================================================================*\
+                /*================================================================================*\
 				 Test if support pure ajax upload
 				\*================================================================================*/
 				var _browse = document.createElement('input');
@@ -82,7 +158,21 @@
 						{
 							if(fileCount<=settings.maxFiles)
 							{
+								var file = this.files[i];
+								if (file.type.match(/image.*/) && file.name.match(/\.(jpg|png|gif)$/)) {
+                                resizeImage(file, 800, function(resizedImageBlob){
+								//add_file(fileList,this.files[i],this.files[i].name,this.files[i].size,fileCount);
+								var fileName = file.name;
+								var fileSize = resizedImageBlob.size;
+							    //console.log(fileName);
+								//console.log(fileSize);
+                                add_file(fileList,resizedImageBlob,fileName,fileSize,fileCount);
+                                });
+							  }
+							  else
+							  {
 								add_file(fileList,this.files[i],this.files[i].name,this.files[i].size,fileCount);
+							  }
 							}
 						}
 					}
@@ -187,6 +277,7 @@
 				\*================================================================================*/
 				function add_file(t,o,n,s,numF)
 				{
+					//console.log(n);
 					var ext=n.split('.').pop().toLowerCase();//file ext
 
 					/*================================================================================*\
@@ -221,6 +312,7 @@
 					var up=$('<input type="button" value="Upload" class="ax-upload" />').bind('click',function(){ this.disabled=true; });
 
 					var tr=$('<tr />').appendTo(t);
+					console.log(n);
 					var td_n=$('<td class="ax-file-name" title="'+n+'" />').appendTo(tr).html(n);
 					var td_s=$('<td class="ax-size-td" />').appendTo(tr).html(s);
 					var td_p=$('<td class="ax-progress-td" />').appendTo(tr);
@@ -285,14 +377,14 @@
 					 * if slice is not supported then send all file at once
 					\*==============================================================*/
 
-//Initialize a new FileReader object
-var reader = new FileReader();
+					//Initialize a new FileReader object
+					var reader = new FileReader();
 
-//Slice the file into the desired chunk
-var chunk = o.slice(start_byte, end_byte);
-reader.readAsBinaryString(chunk);
+					//Slice the file into the desired chunk
+					var chunk = o.slice(start_byte, end_byte);
+					reader.readAsBinaryString(chunk);
 
-/*================================================================================*\
+					/*================================================================================*\
 					 Prepare xmlhttpreq object for file upload Bind functions and progress
 					\*================================================================================*/
 					var xhr = new XMLHttpRequest();//prepare xhr for upload

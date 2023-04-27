@@ -21,6 +21,7 @@
 <v t="leo.20220924163559.1"><vh>config/config 問題</vh></v>
 </v>
 <v t="leo.20221017090940.1"><vh>202210 修改</vh></v>
+<v t="leo.20230426202726.1"><vh>202304 註記</vh></v>
 </v>
 <v t="leo.20190515144242.1"><vh>@clean wsgi.py</vh>
 <v t="leo.20190515144254.1"><vh>Declarations (wsgi.py)</vh></v>
@@ -115,6 +116,9 @@
 <v t="leo.20220911145040.1"><vh>@edit main.py</vh></v>
 <v t="leo.20220911145111.1"><vh>@edit nocache.py</vh></v>
 <v t="leo.20220911145241.1"><vh>@edit .gitignore</vh></v>
+</v>
+<v t="leo.20230426201753.1"><vh>@path static</vh>
+<v t="leo.20230426201801.1"><vh>@edit axuploader.js</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -718,7 +722,7 @@ def fileuploadform(edit):
 &lt;script src="/static/axuploader.js" type="text/javascript"&gt;&lt;/script&gt;
 &lt;script&gt;
 $(document).ready(function(){
-$('.prova').axuploader({url:'fileaxupload', allowExt:['jpg','png','gif','7z','pdf','zip','flv','stl','swf'],
+$('.prova').axuploader({url:'fileaxupload', allowExt:['jpg','png','gif','7z','pdf','zip','ttt','stl','txt','html'],
 finish:function(x,files)
     {
         alert('All files have been uploaded: '+files);
@@ -835,7 +839,8 @@ def generate_pages():
         return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
                      directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Generate Pages&lt;/h1&gt;" + \
                      "已經將網站轉為靜態網頁!" + \
-                     "&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"</t>
+                     "&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+</t>
 <t tx="leo.20190515144237.24"># seperate page need heading and edit variables, if edit=1, system will enter edit mode
 # single page edit will use ssavePage to save content, it means seperate save page
 @app.route('/get_page')
@@ -1936,6 +1941,7 @@ def send_file(path):
 
 
 # setup static directory
+#@app.route('/images/&lt;path:path&gt;')
 #@app.route('/images/&lt;path:path&gt;')
 </t>
 <t tx="leo.20190515144238.15">@app.route('/images/&lt;path:path&gt;')
@@ -3460,7 +3466,8 @@ http_server.serve_forever()</t>
         return url
     else:
         url = url.replace("http://", "https://", 1)
-        return url</t>
+        return url
+</t>
 <t tx="leo.20221017090913.1">@app.route('/acpform')
 def acpform():
     
@@ -3479,7 +3486,8 @@ def acpform():
                  directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Acp From&lt;/h1&gt;&lt;form method='post' action='doAcp'&gt; \
                 Commit Messages:&lt;textarea name='commit' rows='1' cols='80'&gt;&lt;/textarea&gt; \
     &lt;input type='submit' value='acp'&gt;&lt;/form&gt; \
-    &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"</t>
+    &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+</t>
 <t tx="leo.20221017090933.1">@app.route('/doAcp', methods=['POST'])
 def doAcp():
 
@@ -3506,6 +3514,24 @@ def doAcp():
 
 </t>
 <t tx="leo.20221017090940.1">add acpForm and doAcp</t>
+<t tx="leo.20230426201753.1"></t>
+<t tx="leo.20230426202726.1">$(function() {
+	//dosomething
+});
+
+ 即為:
+ 
+ $(document).ready(function(){
+    //something
+});
+
+表示在 DOM tree 載入完成後再執行方法, 但是不會回傳 jQuery 物件.
+
+(function($){
+    //something
+})(jQuery);
+
+用在 jQuery plugin，實際上是執行了一個匿名的 function 並回傳 jQuery 物件，當 jQuery 載入完成後便會開始執行，但無法操作 DOM tree.</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
