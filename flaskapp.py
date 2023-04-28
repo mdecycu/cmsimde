@@ -876,7 +876,7 @@ def fileuploadform(edit):
 <script src="/static/axuploader.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
-$('.prova').axuploader({url:'fileaxupload', allowExt:['jpg','png','gif','7z','pdf','zip','ttt','stl','txt','html'],
+$('.prova').axuploader({url:'fileaxupload', allowExt:['jpg','png','gif','7z','pdf','zip','ttt','stl','txt','html','mp4'],
 finish:function(x,files)
     {
         alert('All files have been uploaded: '+files);
@@ -2331,6 +2331,8 @@ def send_file(path):
 
 
 # setup static directory
+#@app.route('/images/<path:path>')
+#@app.route('/images/<path:path>')
 #@app.route('/images/<path:path>')
 @app.route('/images/<path:path>')
 def send_images(path):
