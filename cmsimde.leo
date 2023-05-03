@@ -1944,6 +1944,9 @@ def send_file(path):
 #@app.route('/images/&lt;path:path&gt;')
 #@app.route('/images/&lt;path:path&gt;')
 #@app.route('/images/&lt;path:path&gt;')
+#@app.route('/images/&lt;path:path&gt;')
+#@app.route('/images/&lt;path:path&gt;')
+#@app.route('/images/&lt;path:path&gt;')
 </t>
 <t tx="leo.20190515144238.15">@app.route('/images/&lt;path:path&gt;')
 def send_images(path):
@@ -3532,7 +3535,17 @@ def doAcp():
     //something
 })(jQuery);
 
-用在 jQuery plugin，實際上是執行了一個匿名的 function 並回傳 jQuery 物件，當 jQuery 載入完成後便會開始執行，但無法操作 DOM tree.</t>
+用在 jQuery plugin，實際上是執行了一個匿名的 function 並回傳 jQuery 物件，當 jQuery 載入完成後便會開始執行，但無法操作 DOM tree.
+
+jQuery AXuploader.js 是一個使用 jQuery 實現的檔案上傳 plugin。下面是該 plugin 的主要程式架構：
+
+    定義了一個 jQuery 的方法 axuploader()，用於初始化檔案上傳功能。
+    在方法內部，使用了一個自定義的選項對象來配置上傳功能的一些參數，例如上傳的目標 URL、上傳的方式、上傳的最大檔案大小等等。
+    當用戶選擇了要上傳的檔案後，使用 AJAX 技術向伺服器端發送一個 POST 請求，並將選中的檔案作為該請求的內容。
+    在發送請求的過程中，通過定義一系列的回調函數，對請求的不同階段進行處理，例如在開始上傳時顯示一個進度條，在上傳成功時顯示一個提示框等等。
+    最後，在插件的內部，使用了一個封裝了 AJAX 的函數，用於向伺服器端發送上傳請求，並處理伺服器端返回的數據。
+
+總體而言，jQuery AXuploader.js 的程式架構比較清晰，使用了常見的 jQuery 和 AJAX 技術，同時對上傳過程中的各個階段都做了良好的處理，使得整個上傳過程變得更加穩定和易用。</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
