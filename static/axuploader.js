@@ -9,12 +9,14 @@
  * 
  */
 // 2013.08.21 Yen corrected Chrome file append error
-//2023.04.27 Yen add the resizeImage and rename functions before uploading
+// 2023.04.27 Yen add the resizeImage and rename functions before uploading
+// 2023.05.25 Yen by pass the .gif file upload
 
 
 /*================================================================================*\
  Add the resizeImage() before call add_file()
 \*================================================================================*/
+/* not for gif
 function resizeImage(file, maxWidth, callback) {
   // Create a new FileReader object
   const reader = new FileReader();
@@ -53,11 +55,12 @@ function resizeImage(file, maxWidth, callback) {
   // Read the file as a data URL
   reader.readAsDataURL(file);
 }
-
+*/
 
 /*================================================================================*\
  Function to convert a data URL to a file object
 \*================================================================================*/
+/*
 function dataURLtoFile(dataUrl, filename) {
   const arr = dataUrl.split(",");
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -69,6 +72,28 @@ function dataURLtoFile(dataUrl, filename) {
   }
   return new File([u8arr], filename, { type: mime });
 }
+*/
+
+function resizeImage(file, maxWidth, callback) {
+    // For PNG and JPEG files
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const ratio = Math.min(maxWidth / img.width, 1);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+          callback(new File([blob], file.name, { type: file.type }));
+        }, file.type);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 
 
 /*================================================================================*\
@@ -142,19 +167,19 @@ function dataURLtoFile(dataUrl, filename) {
 						{
 							if(fileCount<=settings.maxFiles)
 							{
-								if (this.files[i].type.match(/image.*/)) {
-                                resizeImage(this.files[i], 800, function(resizedImageBlob){
-								// before add resizeImage()
-								//add_file(fileList,this.files[i],this.files[i].name,this.files[i].size,fileCount);
-								var fileSize = resizedImageBlob.size;
-                                add_file(fileList,resizedImageBlob,resizedImageBlob.name,fileSize,fileCount);
+                            if (this.files[i].type.match(/image.*/)) {
+                              if (this.files[i].type !== 'image/gif') {
+                                resizeImage(this.files[i], 800, function(resizedImageBlob) {
+                                  var fileSize = resizedImageBlob.size;
+                                  add_file(fileList, resizedImageBlob, resizedImageBlob.name, fileSize, fileCount);
                                 });
-							  }
-							  else
-							  {
-								add_file(fileList,this.files[i],this.files[i].name,this.files[i].size,fileCount);
-							  }
-							}
+                              } else {
+                                add_file(fileList, this.files[i], this.files[i].name, this.files[i].size, fileCount);
+                              }
+                            } else {
+                              add_file(fileList, this.files[i], this.files[i].name, this.files[i].size, fileCount);
+                            }
+                          }
 						}
 					}
 					else
