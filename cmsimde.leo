@@ -2000,23 +2000,23 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 &lt;confmenu&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/sitemap"&gt;SiteMap&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/edit_page"&gt;Edit All&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/sitemap"&gt;SMap&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/edit_page"&gt;EditA&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="''' + str(correct_url()) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/edit_config"&gt;Config&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/search_form"&gt;Search&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/imageuploadform"&gt;Image Upload&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/image_list"&gt;Image List&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/fileuploadform"&gt;File Upload&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/download_list"&gt;File List&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/imageuploadform"&gt;IUpload&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/image_list"&gt;IList&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/fileuploadform"&gt;FUpload&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/download_list"&gt;FList&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/generate_pages"&gt;generate_pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/generate_pages"&gt;Convert&lt;/a&gt;&lt;/li&gt;
 '''
     # under uwsgi mode no start_static and static_port anchor links
     if uwsgi != True:
         outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/start_static"&gt;start_static&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
@@ -2067,32 +2067,32 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 &lt;confmenu&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/sitemap"&gt;Site Map&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/sitemap"&gt;SMap&lt;/a&gt;&lt;/li&gt;
 '''
     if isAdmin():
         outstring += '''
-&lt;li&gt;&lt;a href="/edit_page"&gt;Edit All&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/edit_page"&gt;EditA&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="''' + str(correct_url()) + '''/1"&gt;Edit&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/edit_config"&gt;Config&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/search_form"&gt;Search&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/imageuploadform"&gt;image upload&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/image_list"&gt;image list&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/fileuploadform"&gt;file upload&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/download_list"&gt;file list&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/logout"&gt;logout&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/generate_pages"&gt;generate_pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/imageuploadform"&gt;IUpload&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/image_list"&gt;IList&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/fileuploadform"&gt;FUpload&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/download_list"&gt;FList&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/logout"&gt;Logout&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/generate_pages"&gt;Convert&lt;/a&gt;&lt;/li&gt;
 '''
         # under uwsgi mode no start_static and static_port  anchor links
         # only added when user login as admin
         if uwsgi != True:
             outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/start_static"&gt;start_static&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     else:
         outstring += '''
-&lt;li&gt;&lt;a href="/login"&gt;login&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/login"&gt;Login&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
 &lt;/ul&gt;
@@ -2209,11 +2209,11 @@ def login():
     """
 
     return "&lt;footer&gt; \
-        &lt;a href='/edit_page'&gt;Edit All&lt;/a&gt;| \
+        &lt;a href='/edit_page'&gt;EditA&lt;/a&gt;| \
         &lt;a href='" + str(correct_url) + "/1'&gt;Edit&lt;/a&gt;| \
         &lt;a href='edit_config'&gt;Config&lt;/a&gt; \
-        &lt;a href='login'&gt;login&lt;/a&gt;| \
-        &lt;a href='logout'&gt;logout&lt;/a&gt; \
+        &lt;a href='login'&gt;Login&lt;/a&gt;| \
+        &lt;a href='logout'&gt;Logout&lt;/a&gt; \
         &lt;br /&gt;Powered by &lt;a href='http://cmsimple.cycu.org'&gt;CMSimply&lt;/a&gt; \
         &lt;/footer&gt; \
         &lt;/body&gt;&lt;/html&gt;"
@@ -2229,7 +2229,7 @@ def sitemap(edit):
     directory = render_menu(head, level, page)
     sitemap = render_menu(head, level, page, sitemap=1)
     return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + directory + \
-             "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Site Map&lt;/h1&gt;" + sitemap + \
+             "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;SMap&lt;/h1&gt;" + sitemap + \
              "&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
 
 
@@ -2246,7 +2246,7 @@ def sitemap(edit):
     sitemap = render_menu3(head, level, page, sitemap=1)
     # add tipue search id
     return set_css2() + "&lt;div class='container'&gt;&lt;nav&gt;" + directory + \
-             "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Site Map&lt;/h1&gt;&lt;div id=\"tipue_search_content\"&gt;&lt;/div&gt;" + sitemap + \
+             "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;SMap&lt;/h1&gt;&lt;div id=\"tipue_search_content\"&gt;&lt;/div&gt;" + sitemap + \
              "&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
 
 
@@ -2915,7 +2915,7 @@ def logout():
     directory += '''
                         &lt;li class="active has-children"&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;
                         &lt;ul class="dropdown"&gt;
-                            &lt;li&gt;&lt;a href="sitemap.html"&gt;Site Map&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href="sitemap.html"&gt;SMap&lt;/a&gt;&lt;/li&gt;
                             &lt;li&gt;&lt;a href="./../reveal/index.html"&gt;reveal&lt;/a&gt;&lt;/li&gt;
                             &lt;li&gt;&lt;a href="./../blog/index.html"&gt;blog&lt;/a&gt;&lt;/li&gt;
                         &lt;/ul&gt;

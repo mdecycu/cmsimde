@@ -2155,7 +2155,7 @@ def render_menu2(head, level, page, sitemap=0):
     directory += '''
                         <li class="active has-children"><a href="index.html">Home</a>
                         <ul class="dropdown">
-                            <li><a href="sitemap.html">Site Map</a></li>
+                            <li><a href="sitemap.html">SMap</a></li>
                             <li><a href="./../reveal/index.html">reveal</a></li>
                             <li><a href="./../blog/index.html">blog</a></li>
                         </ul>
@@ -2475,23 +2475,23 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 <confmenu>
 <ul>
 <li><a href="/">Home</a></li>
-<li><a href="/sitemap">SiteMap</a></li>
-<li><a href="/edit_page">Edit All</a></li>
+<li><a href="/sitemap">SMap</a></li>
+<li><a href="/edit_page">EditA</a></li>
 <li><a href="''' + str(correct_url()) + '''/1">Edit</a></li>
 <li><a href="/edit_config">Config</a></li>
 <li><a href="/search_form">Search</a></li>
-<li><a href="/imageuploadform">Image Upload</a></li>
-<li><a href="/image_list">Image List</a></li>
-<li><a href="/fileuploadform">File Upload</a></li>
-<li><a href="/download_list">File List</a></li>
+<li><a href="/imageuploadform">IUpload</a></li>
+<li><a href="/image_list">IList</a></li>
+<li><a href="/fileuploadform">FUpload</a></li>
+<li><a href="/download_list">FList</a></li>
 <li><a href="/logout">Logout</a></li>
-<li><a href="/generate_pages">generate_pages</a></li>
+<li><a href="/generate_pages">Convert</a></li>
 '''
     # under uwsgi mode no start_static and static_port anchor links
     if uwsgi != True:
         outstring += '''
 <li><a href="/acpform">acp</a></li>
-<li><a href="/start_static">start_static</a></li>
+<li><a href="/start_static">SStatic</a></li>
 <li><a href="https://localhost:''' + str(static_port) +'''">''' + str(static_port) + '''</a></li>
 '''
     outstring += '''
@@ -2541,32 +2541,32 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 <confmenu>
 <ul>
 <li><a href="/">Home</a></li>
-<li><a href="/sitemap">Site Map</a></li>
+<li><a href="/sitemap">SMap</a></li>
 '''
     if isAdmin():
         outstring += '''
-<li><a href="/edit_page">Edit All</a></li>
+<li><a href="/edit_page">EditA</a></li>
 <li><a href="''' + str(correct_url()) + '''/1">Edit</a></li>
 <li><a href="/edit_config">Config</a></li>
 <li><a href="/search_form">Search</a></li>
-<li><a href="/imageuploadform">image upload</a></li>
-<li><a href="/image_list">image list</a></li>
-<li><a href="/fileuploadform">file upload</a></li>
-<li><a href="/download_list">file list</a></li>
-<li><a href="/logout">logout</a></li>
-<li><a href="/generate_pages">generate_pages</a></li>
+<li><a href="/imageuploadform">IUpload</a></li>
+<li><a href="/image_list">IList</a></li>
+<li><a href="/fileuploadform">FUpload</a></li>
+<li><a href="/download_list">FList</a></li>
+<li><a href="/logout">Logout</a></li>
+<li><a href="/generate_pages">Convert</a></li>
 '''
         # under uwsgi mode no start_static and static_port  anchor links
         # only added when user login as admin
         if uwsgi != True:
             outstring += '''
 <li><a href="/acpform">acp</a></li>
-<li><a href="/start_static">start_static</a></li>
+<li><a href="/start_static">SStatic</a></li>
 <li><a href="https://localhost:''' + str(static_port) +'''">''' + str(static_port) + '''</a></li>
 '''
     else:
         outstring += '''
-<li><a href="/login">login</a></li>
+<li><a href="/login">Login</a></li>
 '''
     outstring += '''
 </ul>
@@ -2662,11 +2662,11 @@ def set_footer():
     """
 
     return "<footer> \
-        <a href='/edit_page'>Edit All</a>| \
+        <a href='/edit_page'>EditA</a>| \
         <a href='" + str(correct_url) + "/1'>Edit</a>| \
         <a href='edit_config'>Config</a> \
-        <a href='login'>login</a>| \
-        <a href='logout'>logout</a> \
+        <a href='login'>Login</a>| \
+        <a href='logout'>Logout</a> \
         <br />Powered by <a href='http://cmsimple.cycu.org'>CMSimply</a> \
         </footer> \
         </body></html>"
@@ -2681,7 +2681,7 @@ def sitemap(edit):
     directory = render_menu(head, level, page)
     sitemap = render_menu(head, level, page, sitemap=1)
     return set_css() + "<div class='container'><nav>" + directory + \
-             "</nav><section><h1>Site Map</h1>" + sitemap + \
+             "</nav><section><h1>SMap</h1>" + sitemap + \
              "</section></div></body></html>"
 
 
@@ -2697,7 +2697,7 @@ def sitemap2(head):
     sitemap = render_menu3(head, level, page, sitemap=1)
     # add tipue search id
     return set_css2() + "<div class='container'><nav>" + directory + \
-             "</nav><section><h1>Site Map</h1><div id=\"tipue_search_content\"></div>" + sitemap + \
+             "</nav><section><h1>SMap</h1><div id=\"tipue_search_content\"></div>" + sitemap + \
              "</section></div></body></html>"
 
 
