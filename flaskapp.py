@@ -3026,34 +3026,37 @@ def tinymce_editor(menu_input=None, editor_content=None, page_order=None):
         }
         
         function save_data(form) {
-            var page_content = $('textarea#page_content').val();
-            var page_order = $('#page_order').val();
+                var page_content = $('textarea#page_content').val();
+                var page_order = $('#page_order').val();
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/ssavePage",
+                    data: {"page_content": page_content, "page_order": page_order, "action": action},
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.status);
+                        alert(XMLHttpRequest.readyState);
+                        alert(textStatus);
+                    },
+                    success: function() {
+                        //document.getElementById("notice").innerHTML = "saved!";
+                        parser = new DOMParser();
+                        parsed = parser.parseFromString(page_content, 'text/html');
+                        paragraphs = parsed.querySelectorAll('h1, h2, h3');
+                        //alert(paragraphs.length)
+                        //tempAlert("saved!", 700);
 
-            $.ajax({
-                type: "POST",
-                url: "/ssavePage",
-                data: {"page_content": page_content, "page_order": page_order, "action": action},
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert(XMLHttpRequest.status);
-                    alert(XMLHttpRequest.readyState);
-                    alert(textStatus);
-                },
-                success: function() {
-                    parser = new DOMParser();
-                    parsed = parser.parseFromString(page_content, 'text/html');
-                    paragraphs = parsed.querySelectorAll('h1, h2, h3');
-
-                    var prevContent = localStorage.getItem('prevContent');  // Get the previously saved content from local storage
-                    var currentContent = paragraphs.length > 0 ? paragraphs[0].textContent.trim() : '';  // Get the current content from the first header tag
-
-                    if (currentContent !== prevContent) {  // Compare the current and previous content
-                        localStorage.setItem('prevContent', currentContent);  // Update the previous content in local storage
-                        document.location.href = "/";  // Reload the page
-                    } else {
-                        tempAlert("saved!", 700);
+                        if (paragraphs.length > 1 || paragraphs.length == 0 )
+                        {
+                            //window.location.reload();
+                            document.location.href="/";
+                        }
+                        else
+                        {
+                            tempAlert("saved!", 700);
+                        }
                     }
-                }
-            });
+                 }); 
         }
         </script>
         """
