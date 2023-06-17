@@ -1787,6 +1787,88 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/local_blog')
+def local_blog():
+    if isAdmin():
+        os.system("pelican markdown -o blog -s local_publishconf.py")
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+
+        return set_css() + "<div class='container'><nav>" + \
+                   directory + "</nav><section><h1>Local blog generated</h1>" + \
+                   "Blog generated!<br/><br /></body></html>"
+    else:
+        return redirect("/login")
+@app.route('/markdown_action', methods=['POST'])
+def markdown_action():
+    if isAdmin():
+        markdown_dir = _curdir + "/markdown/"
+        title = request.form['title']
+        body = request.form['body']
+
+        # Create the markdown directory if it doesn't exist
+        if not os.path.exists(markdown_dir):
+            os.makedirs(markdown_dir)
+
+        # Save the content to a file with the title as the filename
+        filename = os.path.join(markdown_dir, f'{title}.md')
+        with open(filename, 'w', encoding='utf-8') as file:
+            file.write(body.replace('\r\n', '\n'))
+
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+
+        return set_css() + "<div class='container'><nav>" + \
+                   directory + "</nav><section><h1>Markdown saved</h1>" + \
+                   filename + " saved!<br/><br /><a href='/local_blog'>local_blog</a></body></html>"
+    else:
+        return redirect("/login")
+@app.route('/markdown_form')
+def markdown_form():
+    if isAdmin():
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+        markdown_dir = _curdir + "/markdown/"
+        # the following will also list directory
+        #filenames = os.listdir(markdown_dir) if os.path.exists(markdown_dir) else []
+        filenames = [filename for filename in os.listdir(markdown_dir) if filename.endswith('.md')] if os.path.exists(markdown_dir) else []
+        file_list = 'Existed Files: '
+        for filename in filenames:
+            file_list += f'{filename}, '
+        outstring =  file_list + '''
+        <form method="POST" action="markdown_action">
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" required>.md<br><br>
+            <label for="body">Body:</label><br>
+            <textarea name="body" id="body" rows="10" cols="50" required>
+---
+Title: this is a template
+Date: 2023-06-17 11:00
+Category: Misc
+Tags: 2023FallCAD
+Slug: 2023-Fall-Intro-to-computer-aided-design
+Author: yen
+---
+
+this is a template.
+
+<!-- PELICAN_END_SUMMARY -->
+
+Solid Edge
+----
+<pre class="brush:jscript">
+</pre>
+<pre class="brush: python">
+</pre>
+            </textarea><br><br>
+            <input type="submit" value="Save">
+        </form>
+        '''
+        return set_css() + "<div class='container'><nav>" + \
+           directory + "</nav><section><h1>Markdown form</h1>" + \
+           outstring + "</body></html>"
+    else:
+        return redirect("/login")
 def parse_config():
 
     """Parse config

@@ -72,6 +72,9 @@
 <v t="leo.20190515144238.1"><vh>loadlist_access_list (flaskapp.py)</vh></v>
 <v t="leo.20190515144238.2"><vh>login (flaskapp.py)</vh></v>
 <v t="leo.20190515144238.3"><vh>logout (flaskapp.py)</vh></v>
+<v t="leo.20230618074524.1"><vh>local_blog</vh></v>
+<v t="leo.20230618074505.1"><vh>markdown_action</vh></v>
+<v t="leo.20230618074447.1"><vh>markdown_form</vh></v>
 <v t="leo.20190515144238.4"><vh>parse_config (flaskapp.py)</vh></v>
 <v t="leo.20190515144238.5"><vh>_remove_h123_attrs_old (flaskapp.py)</vh></v>
 <v t="leo.20230616172601.1"><vh>_remove_h123_attrs</vh></v>
@@ -3636,6 +3639,88 @@ jQuery AXuploader.js 是一個使用 jQuery 實現的檔案上傳 plugin。下�
 
     return cleaned_text
 </t>
+<t tx="leo.20230618074447.1">@app.route('/markdown_form')
+def markdown_form():
+    if isAdmin():
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+        markdown_dir = _curdir + "/markdown/"
+        # the following will also list directory
+        #filenames = os.listdir(markdown_dir) if os.path.exists(markdown_dir) else []
+        filenames = [filename for filename in os.listdir(markdown_dir) if filename.endswith('.md')] if os.path.exists(markdown_dir) else []
+        file_list = 'Existed Files: '
+        for filename in filenames:
+            file_list += f'{filename}, '
+        outstring =  file_list + '''
+        &lt;form method="POST" action="markdown_action"&gt;
+            &lt;label for="title"&gt;Title:&lt;/label&gt;
+            &lt;input type="text" name="title" id="title" required&gt;.md&lt;br&gt;&lt;br&gt;
+            &lt;label for="body"&gt;Body:&lt;/label&gt;&lt;br&gt;
+            &lt;textarea name="body" id="body" rows="10" cols="50" required&gt;
+---
+Title: this is a template
+Date: 2023-06-17 11:00
+Category: Misc
+Tags: 2023FallCAD
+Slug: 2023-Fall-Intro-to-computer-aided-design
+Author: yen
+---
+
+this is a template.
+
+&lt;!-- PELICAN_END_SUMMARY --&gt;
+
+Solid Edge
+----
+&lt;pre class="brush:jscript"&gt;
+&lt;/pre&gt;
+&lt;pre class="brush: python"&gt;
+&lt;/pre&gt;
+            &lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+            &lt;input type="submit" value="Save"&gt;
+        &lt;/form&gt;
+        '''
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
+           directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Markdown form&lt;/h1&gt;" + \
+           outstring + "&lt;/body&gt;&lt;/html&gt;"
+    else:
+        return redirect("/login")</t>
+<t tx="leo.20230618074505.1">@app.route('/markdown_action', methods=['POST'])
+def markdown_action():
+    if isAdmin():
+        markdown_dir = _curdir + "/markdown/"
+        title = request.form['title']
+        body = request.form['body']
+
+        # Create the markdown directory if it doesn't exist
+        if not os.path.exists(markdown_dir):
+            os.makedirs(markdown_dir)
+
+        # Save the content to a file with the title as the filename
+        filename = os.path.join(markdown_dir, f'{title}.md')
+        with open(filename, 'w', encoding='utf-8') as file:
+            file.write(body.replace('\r\n', '\n'))
+
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
+                   directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Markdown saved&lt;/h1&gt;" + \
+                   filename + " saved!&lt;br/&gt;&lt;br /&gt;&lt;a href='/local_blog'&gt;local_blog&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;"
+    else:
+        return redirect("/login")</t>
+<t tx="leo.20230618074524.1">@app.route('/local_blog')
+def local_blog():
+    if isAdmin():
+        os.system("pelican markdown -o blog -s local_publishconf.py")
+        head, level, page = parse_content()
+        directory = render_menu(head, level, page)
+
+        return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
+                   directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Local blog generated&lt;/h1&gt;" + \
+                   "Blog generated!&lt;br/&gt;&lt;br /&gt;&lt;/body&gt;&lt;/html&gt;"
+    else:
+        return redirect("/login")</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
