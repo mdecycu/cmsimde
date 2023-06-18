@@ -2546,6 +2546,10 @@ def set_admin_css():
     """Set css for admin
     """
 
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = str(server_ip) + ":" + str(static_port)
+
     outstring = '''<!doctype html>
 <html><head>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
@@ -2593,7 +2597,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         outstring += '''
 <li><a href="/acpform">acp</a></li>
 <li><a href="/start_static">SStatic</a></li>
-<li><a href="https://localhost:''' + str(static_port) +'''">''' + str(static_port) + '''</a></li>
+<li><a href="https://'''+ server_address + '''">''' + str(static_port) + '''</a></li>
 '''
     outstring += '''
 </ul>
@@ -2606,6 +2610,10 @@ def set_css():
 
     """Set css for dynamic site
     """
+
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = str(server_ip) + ":" + str(static_port)
 
     outstring = '''<!doctype html>
 <html><head>
@@ -2663,7 +2671,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
             outstring += '''
 <li><a href="/acpform">acp</a></li>
 <li><a href="/start_static">SStatic</a></li>
-<li><a href="https://localhost:''' + str(static_port) +'''">''' + str(static_port) + '''</a></li>
+<li><a href="https://''' + server_address +'''">''' + str(static_port) + '''</a></li>
 '''
     else:
         outstring += '''
@@ -2897,20 +2905,16 @@ def start_static():
     """Start local static server
     """
 
-    # build directory
-    #os.chdir("./../")
-    server_address = ('localhost', static_port)
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = (server_ip, static_port)
     httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket,
                                    server_side=True,
                                    certfile='./localhost.crt',
                                    keyfile='./localhost.key',
                                    ssl_version=ssl.PROTOCOL_TLSv1_2)
-    #print(os.getcwd())
-    #print(static_port + " https server started")
     httpd.serve_forever()
-
-
 def syntaxhighlight():
 
     """Return syntaxhighlight needed scripts

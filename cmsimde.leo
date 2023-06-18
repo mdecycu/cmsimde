@@ -1973,6 +1973,10 @@ def send_static():
     """Set css for admin
     """
 
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = str(server_ip) + ":" + str(static_port)
+
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
 &lt;meta http-equiv="content-type" content="text/html;charset=utf-8"&gt;
@@ -2020,7 +2024,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
 &lt;/ul&gt;
@@ -2034,6 +2038,10 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 
     """Set css for dynamic site
     """
+
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = str(server_ip) + ":" + str(static_port)
 
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
@@ -2091,7 +2099,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
             outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://localhost:''' + str(static_port) +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     else:
         outstring += '''
@@ -3930,20 +3938,15 @@ def start_static():
     """Start local static server
     """
 
-    # build directory
-    #os.chdir("./../")
-    server_address = ('localhost', static_port)
+    import socket
+    server_ip = socket.gethostbyname(socket.gethostname())
+    server_address = (server_ip, static_port)
     httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket,
                                    server_side=True,
                                    certfile='./localhost.crt',
                                    keyfile='./localhost.key',
                                    ssl_version=ssl.PROTOCOL_TLSv1_2)
-    #print(os.getcwd())
-    #print(static_port + " https server started")
-    httpd.serve_forever()
-
-
-</t>
+    httpd.serve_forever()</t>
 </tnodes>
 </leo_file>
