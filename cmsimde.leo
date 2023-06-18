@@ -58,6 +58,9 @@
 <v t="leo.20190515144237.23"><vh>generate_pages (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.24"><vh>get_page (flaskapp.py)</vh></v>
 <v t="yen.20210708234039.1"><vh>get_page2 (flaskapp.py)</vh></v>
+<v t="leo.20230618112821.1"><vh>get_wan_address</vh></v>
+<v t="leo.20230618112906.1"><vh>get_wan_ipv4_address</vh></v>
+<v t="leo.20230618112935.1"><vh>get_wan_ipv6_address</vh></v>
 <v t="leo.20190515144237.26"><vh>image_delete_file (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.27"><vh>image_doDelete (flaskapp.py)</vh></v>
 <v t="leo.20190515144237.28"><vh>image_list (flaskapp.py)</vh></v>
@@ -287,6 +290,9 @@ except:
 
 # 產生亂數 token 需要 random 與 string 模組
 import string
+
+# for start_static to get wan address
+import socket
 
 # 由 init.py 中的 uwsgi = False 或 True 決定在 uwsgi 模式或近端模式執行
 
@@ -1973,9 +1979,11 @@ def send_static():
     """Set css for admin
     """
 
-    import socket
-    server_ip = socket.gethostbyname(socket.gethostname())
-    server_address = str(server_ip) + ":" + str(static_port)
+    server_ip = get_wan_address() or 'localhost'
+    if "." in server_ip:
+        server_address = str(server_ip) + ":" + str(static_port)
+    else:
+        server_address = "[" + str(server_ip) + "]:" + str(static_port)
 
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
@@ -2039,9 +2047,11 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     """Set css for dynamic site
     """
 
-    import socket
-    server_ip = socket.gethostbyname(socket.gethostname())
-    server_address = str(server_ip) + ":" + str(static_port)
+    server_ip = get_wan_address() or 'localhost'
+    if "." in server_ip:
+        server_address = str(server_ip) + ":" + str(static_port)
+    else:
+        server_address = "[" + str(server_ip) + "]:" + str(static_port)
 
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
@@ -3748,6 +3758,39 @@ def local_blog():
                    "Blog generated!&lt;br/&gt;&lt;br /&gt;&lt;/body&gt;&lt;/html&gt;"
     else:
         return redirect("/login")</t>
+<t tx="leo.20230618112821.1">def get_wan_address():
+    try:
+        ipv4_address = get_wan_ipv4_address()
+        if ipv4_address:
+            return ipv4_address
+
+        ipv6_address = get_wan_ipv6_address()
+        if ipv6_address:
+            return ipv6_address
+    except socket.gaierror:
+        pass
+
+    return 'localhost'
+</t>
+<t tx="leo.20230618112906.1">def get_wan_ipv4_address():
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.connect(("8.8.8.8", 80))  # Use Google Public DNS as the external host
+        ip_address = sock.getsockname()[0]
+        sock.close()
+        return ip_address
+    except socket.error:
+        return None
+</t>
+<t tx="leo.20230618112935.1">def get_wan_ipv6_address():
+    try:
+        sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+        sock.connect(("2001:4860:4860::8888", 80))  # Use Google Public DNS as the external host
+        ip_address = sock.getsockname()[0]
+        sock.close()
+        return ip_address
+    except socket.error:
+        return None</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
@@ -3934,24 +3977,37 @@ token = password_generator()
 本次 2021.07.10 要將用戶選用的標題中特殊符號予以移除</t>
 <t tx="yen.20210906215717.1">@app.route('/start_static/')
 def start_static():
-    
+
     """Start local static server
-    """
+	"""
 
     if isAdmin():
-        import socket
-        server_ip = socket.gethostbyname(socket.gethostname())
-        server_address = (server_ip, static_port)
-        httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
+        server_address = get_wan_address() or 'localhost'
+        server_port = static_port
+
+        # Determine address family based on server_address
+        address_family = socket.AF_INET if ':' not in server_address else socket.AF_INET6
+
+        httpd = http.server.HTTPServer((server_address, server_port), http.server.SimpleHTTPRequestHandler, bind_and_activate=False)
+        httpd.socket = socket.socket(address_family, socket.SOCK_STREAM)
+        httpd.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        if address_family == socket.AF_INET6:
+            httpd.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+            httpd.socket.bind((server_address, server_port, 0, 0))
+        else:
+            httpd.socket.bind((server_address, server_port))
+
         httpd.socket = ssl.wrap_socket(httpd.socket,
                                        server_side=True,
                                        certfile='./localhost.crt',
                                        keyfile='./localhost.key',
                                        ssl_version=ssl.PROTOCOL_TLSv1_2)
+
+        httpd.server_activate()
         httpd.serve_forever()
     else:
         return redirect("/login")
-
 </t>
 </tnodes>
 </leo_file>
