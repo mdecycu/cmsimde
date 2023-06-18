@@ -3679,6 +3679,8 @@ def markdown_form():
         if os.path.exists(edit_filename):
             with open(edit_filename, 'r', encoding='utf-8') as file:
                 content = file.read()
+            # need to html.escape the content
+            content = html_escape(content)
             outstring =  file_list + '''
             &lt;form method="POST" action="/markdown_action"&gt;
                 &lt;label for="title"&gt;Title:&lt;/label&gt;
@@ -3726,10 +3728,12 @@ def markdown_form():
 <t tx="leo.20230618074505.1">@app.route('/markdown_action', methods=['POST'])
 def markdown_action():
     if isAdmin():
+        import html
         markdown_dir = _curdir + "/markdown/"
         title = request.form['title']
         body = request.form['body']
-
+        # see if need to unescape back to the original html
+        body = html.unescape(body)
         # Create the markdown directory if it doesn't exist
         if not os.path.exists(markdown_dir):
             os.makedirs(markdown_dir)
