@@ -22,6 +22,7 @@
 </v>
 <v t="leo.20221017090940.1"><vh>202210 修改</vh></v>
 <v t="leo.20230426202726.1"><vh>202304 註記</vh></v>
+<v t="leo.20230618120553.1"><vh>202306 Covid19</vh></v>
 </v>
 <v t="leo.20190515144242.1"><vh>@clean wsgi.py</vh>
 <v t="leo.20190515144254.1"><vh>Declarations (wsgi.py)</vh></v>
@@ -3791,6 +3792,13 @@ def local_blog():
         return ip_address
     except socket.error:
         return None</t>
+<t tx="leo.20230618120553.1">2023.06.16-06.21
+
+allow us /markdown_form 線上新增或修改網誌 markdown 檔案內容並進行轉檔
+
+將 start_static 轉為可在 wan ipv4 或 ipv6 下運作
+
+</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
