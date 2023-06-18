@@ -3639,47 +3639,66 @@ jQuery AXuploader.js 是一個使用 jQuery 實現的檔案上傳 plugin。下�
 
     return cleaned_text
 </t>
-<t tx="leo.20230618074447.1">@app.route('/markdown_form')
+<t tx="leo.20230618074447.1">@app.route('/markdown_form', methods=['GET'])
 def markdown_form():
     if isAdmin():
+        try:
+            file_to_edit = request.args.get('file')
+        except:
+            file_to_edit = ""
         head, level, page = parse_content()
         directory = render_menu(head, level, page)
         markdown_dir = _curdir + "/markdown/"
-        # the following will also list directory
-        #filenames = os.listdir(markdown_dir) if os.path.exists(markdown_dir) else []
         filenames = [filename for filename in os.listdir(markdown_dir) if filename.endswith('.md')] if os.path.exists(markdown_dir) else []
         file_list = 'Existed Files: '
         for filename in filenames:
             file_list += f'{filename}, '
-        outstring =  file_list + '''
-        &lt;form method="POST" action="markdown_action"&gt;
-            &lt;label for="title"&gt;Title:&lt;/label&gt;
-            &lt;input type="text" name="title" id="title" required&gt;.md&lt;br&gt;&lt;br&gt;
-            &lt;label for="body"&gt;Body:&lt;/label&gt;&lt;br&gt;
-            &lt;textarea name="body" id="body" rows="10" cols="50" required&gt;
----
-Title: this is a template
-Date: 2023-06-17 11:00
-Category: Misc
-Tags: 2023FallCAD
-Slug: 2023-Fall-Intro-to-computer-aided-design
-Author: yen
----
+        if file_to_edit:
+            edit_filename = os.path.join(markdown_dir, file_to_edit+".md")
+        else:
+            edit_filename = ""
+        if os.path.exists(edit_filename):
+            with open(edit_filename, 'r', encoding='utf-8') as file:
+                content = file.read()
+            outstring =  file_list + '''
+            &lt;form method="POST" action="/markdown_action"&gt;
+                &lt;label for="title"&gt;Title:&lt;/label&gt;
+                &lt;input type="text" name="title" id="title" value=''' + file_to_edit+''' required&gt;.md&lt;br&gt;&lt;br&gt;
+                &lt;label for="body"&gt;Body:&lt;/label&gt;&lt;br&gt;
+                &lt;textarea name="body" id="body" rows="10" cols="50" required&gt;'''+ content+'''&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+                &lt;input type="submit" value="Save"&gt;
+            &lt;/form&gt;
+            '''
+        else:
+            outstring =  file_list + '''
+            &lt;form method="POST" action="markdown_action"&gt;
+                &lt;label for="title"&gt;Title:&lt;/label&gt;
+                &lt;input type="text" name="title" id="title" required&gt;.md&lt;br&gt;&lt;br&gt;
+                &lt;label for="body"&gt;Body:&lt;/label&gt;&lt;br&gt;
+                &lt;textarea name="body" id="body" rows="10" cols="50" required&gt;
+    ---
+    Title: this is a template
+    Date: 2023-06-17 11:00
+    Category: Misc
+    Tags: 2023FallCAD
+    Slug: 2023-Fall-Intro-to-computer-aided-design
+    Author: yen
+    ---
 
-this is a template.
+    this is a template.
 
-&lt;!-- PELICAN_END_SUMMARY --&gt;
+    &lt;!-- PELICAN_END_SUMMARY --&gt;
 
-Solid Edge
-----
-&lt;pre class="brush:jscript"&gt;
-&lt;/pre&gt;
-&lt;pre class="brush: python"&gt;
-&lt;/pre&gt;
-            &lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
-            &lt;input type="submit" value="Save"&gt;
-        &lt;/form&gt;
-        '''
+    Solid Edge
+    ----
+    &lt;pre class="brush:jscript"&gt;
+    &lt;/pre&gt;
+    &lt;pre class="brush: python"&gt;
+    &lt;/pre&gt;
+                &lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+                &lt;input type="submit" value="Save"&gt;
+            &lt;/form&gt;
+            '''
         return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
            directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Markdown form&lt;/h1&gt;" + \
            outstring + "&lt;/body&gt;&lt;/html&gt;"

@@ -1823,47 +1823,66 @@ def markdown_action():
                    filename + " saved!<br/><br /><a href='/local_blog'>local_blog</a></body></html>"
     else:
         return redirect("/login")
-@app.route('/markdown_form')
+@app.route('/markdown_form', methods=['GET'])
 def markdown_form():
     if isAdmin():
+        try:
+            file_to_edit = request.args.get('file')
+        except:
+            file_to_edit = ""
         head, level, page = parse_content()
         directory = render_menu(head, level, page)
         markdown_dir = _curdir + "/markdown/"
-        # the following will also list directory
-        #filenames = os.listdir(markdown_dir) if os.path.exists(markdown_dir) else []
         filenames = [filename for filename in os.listdir(markdown_dir) if filename.endswith('.md')] if os.path.exists(markdown_dir) else []
         file_list = 'Existed Files: '
         for filename in filenames:
             file_list += f'{filename}, '
-        outstring =  file_list + '''
-        <form method="POST" action="markdown_action">
-            <label for="title">Title:</label>
-            <input type="text" name="title" id="title" required>.md<br><br>
-            <label for="body">Body:</label><br>
-            <textarea name="body" id="body" rows="10" cols="50" required>
----
-Title: this is a template
-Date: 2023-06-17 11:00
-Category: Misc
-Tags: 2023FallCAD
-Slug: 2023-Fall-Intro-to-computer-aided-design
-Author: yen
----
+        if file_to_edit:
+            edit_filename = os.path.join(markdown_dir, file_to_edit+".md")
+        else:
+            edit_filename = ""
+        if os.path.exists(edit_filename):
+            with open(edit_filename, 'r', encoding='utf-8') as file:
+                content = file.read()
+            outstring =  file_list + '''
+            <form method="POST" action="/markdown_action">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" value=''' + file_to_edit+''' required>.md<br><br>
+                <label for="body">Body:</label><br>
+                <textarea name="body" id="body" rows="10" cols="50" required>'''+ content+'''</textarea><br><br>
+                <input type="submit" value="Save">
+            </form>
+            '''
+        else:
+            outstring =  file_list + '''
+            <form method="POST" action="markdown_action">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required>.md<br><br>
+                <label for="body">Body:</label><br>
+                <textarea name="body" id="body" rows="10" cols="50" required>
+    ---
+    Title: this is a template
+    Date: 2023-06-17 11:00
+    Category: Misc
+    Tags: 2023FallCAD
+    Slug: 2023-Fall-Intro-to-computer-aided-design
+    Author: yen
+    ---
 
-this is a template.
+    this is a template.
 
-<!-- PELICAN_END_SUMMARY -->
+    <!-- PELICAN_END_SUMMARY -->
 
-Solid Edge
-----
-<pre class="brush:jscript">
-</pre>
-<pre class="brush: python">
-</pre>
-            </textarea><br><br>
-            <input type="submit" value="Save">
-        </form>
-        '''
+    Solid Edge
+    ----
+    <pre class="brush:jscript">
+    </pre>
+    <pre class="brush: python">
+    </pre>
+                </textarea><br><br>
+                <input type="submit" value="Save">
+            </form>
+            '''
         return set_css() + "<div class='container'><nav>" + \
            directory + "</nav><section><h1>Markdown form</h1>" + \
            outstring + "</body></html>"
