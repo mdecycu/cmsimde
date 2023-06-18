@@ -2632,7 +2632,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     if uwsgi != True:
         outstring += '''
 <li><a href="/acpform">acp</a></li>
-<li><a href="/start_static">SStatic</a></li>
+<li><a href="/start_static/">SStatic</a></li>
 <li><a href="https://'''+ server_address + '''">''' + str(static_port) + '''</a></li>
 '''
     outstring += '''
@@ -2708,7 +2708,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         if uwsgi != True:
             outstring += '''
 <li><a href="/acpform">acp</a></li>
-<li><a href="/start_static">SStatic</a></li>
+<li><a href="/start_static/">SStatic</a></li>
 <li><a href="https://''' + server_address +'''">''' + str(static_port) + '''</a></li>
 '''
     else:

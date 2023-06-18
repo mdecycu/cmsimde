@@ -2031,7 +2031,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
     if uwsgi != True:
         outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
@@ -2108,7 +2108,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         if uwsgi != True:
             outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/start_static"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     else:
