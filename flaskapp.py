@@ -1898,25 +1898,25 @@ def markdown_form():
                 <input type="text" name="title" id="title" required>.md<br><br>
                 <label for="body">Body:</label><br>
                 <textarea name="body" id="body" rows="10" cols="50" required>
-    ---
-    Title: this is a template
-    Date: 2023-06-17 11:00
-    Category: Misc
-    Tags: 2023FallCAD
-    Slug: 2023-Fall-Intro-to-computer-aided-design
-    Author: yen
-    ---
+---
+Title: this is a template
+Date: 2023-06-17 11:00
+Category: Misc
+Tags: 2023FallCAD
+Slug: 2023-Fall-Intro-to-computer-aided-design
+Author: yen
+---
 
-    this is a template.
+this is a template.
 
-    <!-- PELICAN_END_SUMMARY -->
+<!-- PELICAN_END_SUMMARY -->
 
-    Solid Edge
-    ----
-    <pre class="brush:jscript">
-    </pre>
-    <pre class="brush: python">
-    </pre>
+Solid Edge
+----
+<pre class="brush:jscript">
+</pre>
+<pre class="brush: python">
+</pre>
                 </textarea><br><br>
                 <input type="submit" value="Save">
             </form>
