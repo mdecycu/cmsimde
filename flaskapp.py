@@ -1953,7 +1953,7 @@ def parse_config():
     return site_title, password
 
 
-def _remove_h123_attrs_old(soup):
+def _remove_h123_attrs(soup):
 
     """Remove h1-h3 tag attribute
     """
@@ -2006,34 +2006,7 @@ def _remove_h123_attrs_old(soup):
 
     return soup
 
-def _remove_h123_attrs(soup):
-
-    """Remove h1-h3 tag attribute
-    """
-
-    tag_order = 0
-    for tag in soup.find_all(['h1', 'h2', 'h3']):
-        if len(tag.contents) == 0:  # If the tag has no contents (text or child elements)
-            if tag_order == 0:
-                tag.string = "First"  # Replace the tag's text with "First" if it's the first tag encountered
-            else:
-                tag.extract()  # Remove the tag if it has no contents and is not the first tag
-        elif len(tag.contents) == 1 and tag.get_text() == "":
-            if tag_order == 0:
-                tag.insert_before(soup.new_tag('h1', 'First'))  # Insert an h1 tag with "First" text before the tag
-            else:
-                tag.replace_with_children()  # Replace the tag with its child elements if it has no text
-        elif len(tag.contents) > 1:
-            if tag_order == 0:
-                tag.insert_before(soup.new_tag('h1', 'First'))  # Insert an h1 tag with "First" text before the tag
-            else:
-                tag.insert_before(soup.new_tag('br'))  # Insert a <br> tag before the tag for visual separation
-                tag.replace_with_children()  # Replace the tag with its child elements
-        tag_order += 1  # Increment the tag order counter
-
-    return soup
-
-def parse_content_old():
+def parse_content():
 
     """Use bs4 and re module functions to parse content.htm
     """
@@ -2118,56 +2091,6 @@ def parse_content_old():
     cut = temp_data[0]
     # the last page content
     page_list.append(cut)
-    return head_list, level_list, page_list
-
-
-def parse_content():
-    """
-    Use bs4 and re module functions to parse content.htm
-    """
-
-    content_path = os.path.join(config_dir, "content.htm")
-    if not os.path.isfile(content_path):
-        return "Error: no content.htm"
-
-    with open(content_path, "r", encoding="utf-8") as f:
-        subject = f.read()
-
-    if not subject:
-        return "Error: no data in content.htm"
-
-    soup = bs4.BeautifulSoup(subject, 'html.parser')
-    soup = _remove_h123_attrs(soup)  # Assuming this function removes attributes from h1, h2, h3 tags
-
-    with open(content_path, "w", encoding="utf-8") as f:
-        f.write(soup.prettify())  # Rewrite modified HTML back to content.htm
-
-    htags = soup.find_all(['h1', 'h2', 'h3'])  # Find all h1, h2, h3 tags in the modified soup
-
-    head_list = []  # List to store header texts
-    level_list = []  # List to store header levels
-    page_list = []  # List to store page contents
-
-    if htags:
-        subject = str(soup)  # Convert the modified soup back to a string
-        for i in range(len(htags) - 1):
-            # Remove special characters from the header text
-            header_text = remove_special_characters(htags[i].text.strip())
-            head_list.append(header_text)  # Append the modified header text
-            level_list.append(htags[i].name[1])  # Extract and append the level of the header (h1, h2, h3)
-            start_index = subject.find(str(htags[i])) + len(str(htags[i]))  # Find the start index of the page content
-            end_index = subject.find(str(htags[i + 1]))  # Find the end index of the page content
-            page_content = subject[start_index:end_index].strip()  # Extract the page content between the header tags
-            page_list.append(page_content)  # Append the extracted page content to the list
-
-        # Process the last header separately
-        last_header_text = remove_special_characters(htags[-1].text.strip())
-        head_list.append(last_header_text)  # Append the modified last header text
-        level_list.append(htags[-1].name[1])  # Extract and append the level of the last header
-        start_index = subject.rfind(str(htags[-1])) + len(str(htags[-1]))  # Find the start index of the last page content
-        page_content = subject[start_index:].strip()  # Extract the last page content
-        page_list.append(page_content)  # Append the last page content to the list
-
     return head_list, level_list, page_list
 
 

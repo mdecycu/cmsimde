@@ -80,10 +80,8 @@
 <v t="leo.20230618074505.1"><vh>markdown_action</vh></v>
 <v t="leo.20230618074447.1"><vh>markdown_form</vh></v>
 <v t="leo.20190515144238.4"><vh>parse_config (flaskapp.py)</vh></v>
-<v t="leo.20190515144238.5"><vh>_remove_h123_attrs_old (flaskapp.py)</vh></v>
-<v t="leo.20230616172601.1"><vh>_remove_h123_attrs</vh></v>
-<v t="leo.20190515144238.6"><vh>parse_content_old (flaskapp.py)</vh></v>
-<v t="leo.20230616172524.1"><vh>parse_content</vh></v>
+<v t="leo.20190515144238.5"><vh>_remove_h123_attrs (flaskapp.py)</vh></v>
+<v t="leo.20190515144238.6"><vh>parse_content (flaskapp.py)</vh></v>
 <v t="leo.20230616173643.1"><vh>remove_special_characters</vh></v>
 <v t="leo.20190515144238.7"><vh>render_menu (flaskapp.py)</vh></v>
 <v t="leo.20190515144238.8"><vh>render_menu2 (flaskapp.py)</vh></v>
@@ -2682,7 +2680,7 @@ def logout():
 
 
 </t>
-<t tx="leo.20190515144238.5">def _remove_h123_attrs_old(soup):
+<t tx="leo.20190515144238.5">def _remove_h123_attrs(soup):
 
     """Remove h1-h3 tag attribute
     """
@@ -2736,7 +2734,7 @@ def logout():
     return soup
 
 </t>
-<t tx="leo.20190515144238.6">def parse_content_old():
+<t tx="leo.20190515144238.6">def parse_content():
 
     """Use bs4 and re module functions to parse content.htm
     """
@@ -3566,85 +3564,6 @@ jQuery AXuploader.js 是一個使用 jQuery 實現的檔案上傳 plugin。下�
     最後，在插件的內部，使用了一個封裝了 AJAX 的函數，用於向伺服器端發送上傳請求，並處理伺服器端返回的數據。
 
 總體而言，jQuery AXuploader.js 的程式架構比較清晰，使用了常見的 jQuery 和 AJAX 技術，同時對上傳過程中的各個階段都做了良好的處理，使得整個上傳過程變得更加穩定和易用。</t>
-<t tx="leo.20230616172524.1">def parse_content():
-    """
-    Use bs4 and re module functions to parse content.htm
-    """
-
-    content_path = os.path.join(config_dir, "content.htm")
-    if not os.path.isfile(content_path):
-        return "Error: no content.htm"
-
-    with open(content_path, "r", encoding="utf-8") as f:
-        subject = f.read()
-
-    if not subject:
-        return "Error: no data in content.htm"
-
-    soup = bs4.BeautifulSoup(subject, 'html.parser')
-    soup = _remove_h123_attrs(soup)  # Assuming this function removes attributes from h1, h2, h3 tags
-
-    with open(content_path, "w", encoding="utf-8") as f:
-        f.write(soup.prettify())  # Rewrite modified HTML back to content.htm
-
-    htags = soup.find_all(['h1', 'h2', 'h3'])  # Find all h1, h2, h3 tags in the modified soup
-
-    head_list = []  # List to store header texts
-    level_list = []  # List to store header levels
-    page_list = []  # List to store page contents
-
-    if htags:
-        subject = str(soup)  # Convert the modified soup back to a string
-        for i in range(len(htags) - 1):
-            # Remove special characters from the header text
-            header_text = remove_special_characters(htags[i].text.strip())
-            head_list.append(header_text)  # Append the modified header text
-            level_list.append(htags[i].name[1])  # Extract and append the level of the header (h1, h2, h3)
-            start_index = subject.find(str(htags[i])) + len(str(htags[i]))  # Find the start index of the page content
-            end_index = subject.find(str(htags[i + 1]))  # Find the end index of the page content
-            page_content = subject[start_index:end_index].strip()  # Extract the page content between the header tags
-            page_list.append(page_content)  # Append the extracted page content to the list
-
-        # Process the last header separately
-        last_header_text = remove_special_characters(htags[-1].text.strip())
-        head_list.append(last_header_text)  # Append the modified last header text
-        level_list.append(htags[-1].name[1])  # Extract and append the level of the last header
-        start_index = subject.rfind(str(htags[-1])) + len(str(htags[-1]))  # Find the start index of the last page content
-        page_content = subject[start_index:].strip()  # Extract the last page content
-        page_list.append(page_content)  # Append the last page content to the list
-
-    return head_list, level_list, page_list
-
-
-</t>
-<t tx="leo.20230616172601.1">def _remove_h123_attrs(soup):
-
-    """Remove h1-h3 tag attribute
-    """
-
-    tag_order = 0
-    for tag in soup.find_all(['h1', 'h2', 'h3']):
-        if len(tag.contents) == 0:  # If the tag has no contents (text or child elements)
-            if tag_order == 0:
-                tag.string = "First"  # Replace the tag's text with "First" if it's the first tag encountered
-            else:
-                tag.extract()  # Remove the tag if it has no contents and is not the first tag
-        elif len(tag.contents) == 1 and tag.get_text() == "":
-            if tag_order == 0:
-                tag.insert_before(soup.new_tag('h1', 'First'))  # Insert an h1 tag with "First" text before the tag
-            else:
-                tag.replace_with_children()  # Replace the tag with its child elements if it has no text
-        elif len(tag.contents) &gt; 1:
-            if tag_order == 0:
-                tag.insert_before(soup.new_tag('h1', 'First'))  # Insert an h1 tag with "First" text before the tag
-            else:
-                tag.insert_before(soup.new_tag('br'))  # Insert a &lt;br&gt; tag before the tag for visual separation
-                tag.replace_with_children()  # Replace the tag with its child elements
-        tag_order += 1  # Increment the tag order counter
-
-    return soup
-
-</t>
 <t tx="leo.20230616173643.1">def remove_special_characters(text):
     """
     Removes special characters from the given text.
