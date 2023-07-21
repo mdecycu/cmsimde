@@ -57,9 +57,9 @@
 	};
 
 	Brush.prototype	= new SyntaxHighlighter.Highlighter();
-	Brush.aliases	= ['py', 'python'];
+	Brush.aliases	= ['mojo'];
 
-	SyntaxHighlighter.brushes.Python = Brush;
+	SyntaxHighlighter.brushes.Mojo = Brush;
 
 	// CommonJS
 	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
