@@ -5,7 +5,6 @@
 
 from flask import Flask, send_from_directory, request, redirect, \
     render_template, session, make_response, url_for, flash
-# to install flask_cors use "python -m pip install flask_cors"
 from flask_cors import CORS
 import random
 import math
@@ -39,8 +38,6 @@ sys.setrecursionlimit(1000000)
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
-# 原先使用的 __file__ 所在目錄
-#_curdir = os.path.join(os.getcwd(), os.path.dirname(__file__))
 _curdir = os.path.join(os.getcwd(), parentdir)
 import init
 # for start_static function
@@ -106,6 +103,7 @@ def acpform():
     
     """acp form routine
     """
+
     head, level, page = parse_content()
     directory = render_menu(head, level, page)
     if not isAdmin():
@@ -120,10 +118,13 @@ def acpform():
                 Commit Messages:<textarea name='commit' rows='1' cols='80'></textarea> \
     <input type='submit' value='acp'></form> \
     </section></div></body></html>"
+
+
 def password_generator(size=4, chars=string.ascii_lowercase + string.digits):
 
     """Generate random password
     """
+
     return ''.join(random.choice(chars) for _ in range(size))
 
 
@@ -150,6 +151,7 @@ def checkMath():
 
     """Use LaTeX Equation rendering
     """
+
     outstring = '''
 <!-- 啟用 LaTeX equations 編輯 -->
   <!-- <script>
@@ -167,12 +169,15 @@ def correct_url():
     """get the correct url for http and https edit mode
         to replace original request.url under set_admin_css, set_css and set_footer
     """
+
     url = request.url
     if request.is_secure:
         return url
     else:
         url = url.replace("http://", "https://", 1)
         return url
+
+
 @app.route('/delete_file', methods=['POST'])
 def delete_file():
 
@@ -266,8 +271,6 @@ def doAcp():
                    directory + "</nav><section><h1>Acp done</h1>Acp done</section></div></body></html>"
 
 
-
-
 @app.route('/doSearch', methods=['POST'])
 def doSearch():
 
@@ -303,7 +306,7 @@ def download():
     if type == "files":
         return send_from_directory(download_dir, filename=filename)
     else:
-    # for image files
+        # for image files
         return send_from_directory(image_dir, filename=filename)
 
 
@@ -502,6 +505,7 @@ def downloads(path):
 
     return send_from_directory(_curdir+"/downloads/", path)
 
+
 def downloadselect_access_list(files, starti, endi):
 
     """Accompanied with file_selector
@@ -580,6 +584,7 @@ def editorhead():
     
     """Add editor head html
     """
+
     return '''
     <br />
 <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
@@ -656,6 +661,8 @@ def favicon():
     """
 
     return send_from_directory(_curdir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 def file_get_contents(filename):
 
     """Return filename content
@@ -995,6 +1002,8 @@ def generate_pages():
                      directory + "</nav><section><h1>Generate Pages</h1>" + \
                      "已經將網站轉為靜態網頁!" + \
                      "</section></div></body></html>"
+
+
 # seperate page need heading and edit variables, if edit=1, system will enter edit mode
 # single page edit will use ssavePage to save content, it means seperate save page
 @app.route('/get_page')
@@ -1064,20 +1073,9 @@ def get_page(heading, edit):
                     outstring_duplicate += outstring_list[i] + "<br /><hr>"
                 return outstring_duplicate
             else:
-            #pagedata = "<h"+level[page_order]+">"+heading+"</h"+level[page_order]+">"+search_content(head, page, heading)
-            #outstring = last_page+" "+next_page+"<br />"+ tinymce_editor(directory, html_escape(pagedata), page_order)
                 return outstring
 
 
-# seperate page need heading and edit variables, if edit=1, system will enter edit mode
-# single page edit will use ssavePage to save content, it means seperate save page
-'''
-@app.route('/get_page2')
-@app.route('/get_page2/<heading>', defaults={'edit': 0})
-@app.route('/get_page2/<heading>/<int:edit>')
-'''
-# before add tipue search function
-#def get_page2(heading, head, edit):
 def get_page2(heading, head, edit, get_page_content = None):
 
     """Get page content and replace certain string for static site
@@ -1202,12 +1200,14 @@ def get_page2(heading, head, edit, get_page_content = None):
                     outstring_duplicate += outstring_list[i] + "<br /><hr>"
                 return outstring_duplicate
             else:
-            #pagedata = "<h" + level[page_order]+">" + heading + "</h" + level[page_order] + ">" + search_content(head, page, heading)
-            #outstring = last_page + " " + next_page + "<br />" + tinymce_editor(directory, html_escape(pagedata), page_order)
                 return outstring
 
 
 def get_wan_address():
+
+    """get wide area network address
+    """
+  
     try:
         ipv4_address = get_wan_ipv4_address()
         if ipv4_address:
@@ -1220,7 +1220,12 @@ def get_wan_address():
         pass
 
     return 'localhost'
+
+
 def get_wan_ipv4_address():
+
+    """get IPv4 wide area network address
+    """
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(("8.8.8.8", 80))  # Use Google Public DNS as the external host
@@ -1229,7 +1234,13 @@ def get_wan_ipv4_address():
         return ip_address
     except socket.error:
         return None
+
+
 def get_wan_ipv6_address():
+
+    """get IPv6 wide area network address
+    """
+
     try:
         sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
         sock.connect(("2001:4860:4860::8888", 80))  # Use Google Public DNS as the external host
@@ -1238,6 +1249,8 @@ def get_wan_ipv6_address():
         return ip_address
     except socket.error:
         return None
+
+
 @app.route('/image_delete_file', methods=['POST'])
 def image_delete_file():
 
@@ -1266,7 +1279,6 @@ def image_delete_file():
             outstring += filename[index] + "<input type='hidden' name='filename' value='" + \
                               filename[index] + "'><br />"
     outstring += "<br /><input type='submit' value='delete'></form>"
-
     return set_css() + "<div class='container'><nav>" + \
              directory + "</nav><section><h1>Download List</h1>" + \
              outstring + "<br/><br /></body></html>"
@@ -1298,10 +1310,8 @@ def image_doDelete():
                 outstring += filename[index] + " deleted!<br />"
             except:
                 outstring += filename[index] + "Error, can not delete files!<br />"
-
     head, level, page = parse_content()
     directory = render_menu(head, level, page)
-
     return set_css() + "<div class='container'><nav>" + \
              directory + "</nav><section><h1>Image List</h1>" + \
              outstring + "<br/><br /></body></html>"
@@ -1823,6 +1833,10 @@ def logout():
 
 @app.route('/local_blog')
 def local_blog():
+
+    """Generate local blog files from markdown directory
+    """
+
     if isAdmin():
         os.system("pelican markdown -o blog -s local_publishconf.py")
         head, level, page = parse_content()
@@ -1833,8 +1847,14 @@ def local_blog():
                    "Blog generated!<br/><br /></body></html>"
     else:
         return redirect("/login")
+
+
 @app.route('/markdown_action', methods=['POST'])
 def markdown_action():
+  
+    """Action for markdown_form
+    """
+  
     if isAdmin():
         import html
         markdown_dir = _curdir + "/markdown/"
@@ -1859,8 +1879,14 @@ def markdown_action():
                    filename + " saved!<br/><br /><a href='/local_blog'>local_blog</a></body></html>"
     else:
         return redirect("/login")
+
+
 @app.route('/markdown_form', methods=['GET'])
 def markdown_form():
+
+    """Web-based markdown file edit form
+    """
+
     if isAdmin():
         try:
             file_to_edit = request.args.get('file')
@@ -1926,6 +1952,8 @@ Solid Edge
            outstring + "</body></html>"
     else:
         return redirect("/login")
+
+
 def parse_config():
 
     """Parse config
@@ -2005,6 +2033,7 @@ def _remove_h123_attrs(soup):
         tag_order = tag_order + 1
 
     return soup
+
 
 def parse_content():
 
@@ -2095,21 +2124,22 @@ def parse_content():
 
 
 def remove_special_characters(text):
-    """
-    Removes special characters from the given text.
+    
+    """Removes special characters from the given text.
     """
     # Define the set of special characters to remove
     special_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', '[', ']', '{', '}', '|', '\\', '/',
                      ':', ';', '<', '>', ',', '.', '?', '`', '~', "'", '"']
-
     # Remove special characters from the text
     cleaned_text = ''.join(char for char in text if char not in special_chars)
 
     return cleaned_text
-def render_menu(head, level, page, sitemap=0):
 
+
+def render_menu(head, level, page, sitemap=0):
+    
     """允許使用者在 h1 標題後直接加上 h3 標題, 或者隨後納入 h4 之後作為標題標註
-     """
+    """
 
     directory = ""
     # 從 level 數列第一個元素作為開端
@@ -2412,28 +2442,6 @@ def savePage():
     return redirect("/edit_page")
 
 
-# use head title to search page content
-'''
-# search_content(head, page, search)
-# 從 head 與 page 數列中, 以 search 關鍵字進行查詢
-# 原先傳回與 search 關鍵字頁面對應的頁面內容
-# 現在則傳回多重的頁面次序與頁面內容數列
-find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
-head = ["標題一","標題二","標題三","標題一","標題四","標題五"]
-search_result = find(head,["標題一"])[0]
-page_order = []
-page_content = []
-for i in range(len(search_result)):
-    # 印出次序
-    page_order.append(search_result[i])
-    # 標題為 head[search_result[i]]
-    #  頁面內容則為 page[search_result[i]]
-    page_content.append(page[search_result[i]])
-    # 從 page[次序] 印出頁面內容
-# 準備傳回 page_order 與 page_content 等兩個數列
-'''
-
-
 def search_content(head, page, search):
 
     """Search content
@@ -2480,7 +2488,9 @@ def send_file(path):
 
     """Send file function
     """
+    
     return app.send_static_file(static_dir + path)
+
 
 @app.route('/images/<path:path>')
 def send_images(path):
@@ -2744,6 +2754,8 @@ def set_footer():
         <br />Powered by <a href='http://cmsimple.cycu.org'>CMSimply</a> \
         </footer> \
         </body></html>"
+
+
 @app.route('/sitemap', defaults={'edit': 1})
 @app.route('/sitemap/<path:edit>')
 def sitemap(edit):
@@ -2868,7 +2880,7 @@ def ssavePage():
 def start_static():
 
     """Start local static server
-	"""
+    """
 
     if isAdmin():
         server_address = get_wan_address() or 'localhost'
@@ -3169,27 +3181,6 @@ def unique(items):
             count[item] += 1
             keep.append(str(item) + "_" + str(count[item]))
     return keep
-
-
-# for merging two lists and preserve the duplicated elements
-'''
-def merge_sequences(seq1,seq2):
-    sm=SequenceMatcher(a=seq1,b=seq2)
-    res = []
-    for (op, start1, end1, start2, end2) in sm.get_opcodes():
-        if op == 'equal' or op=='delete':
-            #This range appears in both sequences, or only in the first one.
-            res += seq1[start1:end1]
-        elif op == 'insert':
-            #This range appears in only the second sequence.
-            res += seq2[start2:end2]
-        elif op == 'replace':
-            #There are different ranges in each sequence - add both.
-            res += seq1[start1:end1]
-            res += seq2[start2:end2]
-    return res
-
-'''
 
 
 def merge_sequences(list1, list2):
