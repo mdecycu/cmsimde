@@ -137,7 +137,11 @@ def checkLogin():
     """
 
     password = request.form["password"]
-    site_title, saved_password = parse_config()
+    # for Replit, need to setup on the secrets tab for key "config"
+    try:
+        saved_password = os.getenv("config")
+    except:
+        site_title, saved_password = parse_config()
     hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
     if hashed_password == saved_password:
         # 為了讓多 cmsimde 可以在同一個瀏覽器共存, 因此讓每一個 session 不同
