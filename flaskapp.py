@@ -138,9 +138,9 @@ def checkLogin():
 
     password = request.form["password"]
     # for Replit, need to setup on the secrets tab for key "config"
-    try:
+    if os.getenv("config") != None:
         saved_password = os.getenv("config")
-    except:
+    else:
         site_title, saved_password = parse_config()
     hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
     if hashed_password == saved_password:
