@@ -28,3 +28,6 @@ Temporary Items
 .apdisk
 
 venv/
+.pythonlibs
+.replit
+replit.nix
