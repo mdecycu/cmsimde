@@ -2902,17 +2902,17 @@ def start_static():
             httpd.socket.bind((server_address, server_port, 0, 0))
         else:
             httpd.socket.bind((server_address, server_port))
-
-        httpd.socket = ssl.wrap_socket(httpd.socket,
-                                       server_side=True,
-                                       certfile='./localhost.crt',
-                                       keyfile='./localhost.key',
-                                       ssl_version=ssl.PROTOCOL_TLSv1_2)
-
+        # for Python 3.12.0 need to use ssl create context first
+        # https://docs.python.org/3/library/ssl.html#ssl-security
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(certfile='./localhost.crt', keyfile='./localhost.key')
+        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
         httpd.server_activate()
         httpd.serve_forever()
     else:
         return redirect("/login")
+
+
 def syntaxhighlight():
 
     """Return syntaxhighlight needed scripts
