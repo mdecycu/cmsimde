@@ -2574,7 +2574,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         outstring += '''
 <li><a href="/acpform">acp</a></li>
 <li><a href="/start_static/">SStatic</a></li>
-<li><a href="https://'''+ server_address + '''">''' + str(static_port) + '''</a></li>
+<li><a href="http://'''+ server_address + '''">''' + str(static_port) + '''</a></li>
 '''
     outstring += '''
 </ul>
@@ -2650,7 +2650,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
             outstring += '''
 <li><a href="/acpform">acp</a></li>
 <li><a href="/start_static/">SStatic</a></li>
-<li><a href="https://''' + server_address +'''">''' + str(static_port) + '''</a></li>
+<li><a href="http://''' + server_address +'''">''' + str(static_port) + '''</a></li>
 '''
     else:
         outstring += '''
@@ -2882,10 +2882,8 @@ def ssavePage():
 
 @app.route('/start_static/')
 def start_static():
-
-    """Start local static server
-    """
-
+    """Start local static server in http"""
+    
     if isAdmin():
         server_address = get_wan_address() or 'localhost'
         server_port = static_port
@@ -2902,11 +2900,7 @@ def start_static():
             httpd.socket.bind((server_address, server_port, 0, 0))
         else:
             httpd.socket.bind((server_address, server_port))
-        # for Python 3.12.0 need to use ssl create context first
-        # https://docs.python.org/3/library/ssl.html#ssl-security
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        context.load_cert_chain(certfile='./localhost.crt', keyfile='./localhost.key')
-        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+
         httpd.server_activate()
         httpd.serve_forever()
     else:

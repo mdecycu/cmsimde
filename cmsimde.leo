@@ -237,7 +237,6 @@ if __name__ == "__main__":
 
 from flask import Flask, send_from_directory, request, redirect, \
     render_template, session, make_response, url_for, flash
-# to install flask_cors use "python -m pip install flask_cors"
 from flask_cors import CORS
 import random
 import math
@@ -271,8 +270,6 @@ sys.setrecursionlimit(1000000)
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
-# 原先使用的 __file__ 所在目錄
-#_curdir = os.path.join(os.getcwd(), os.path.dirname(__file__))
 _curdir = os.path.join(os.getcwd(), parentdir)
 import init
 # for start_static function
@@ -416,6 +413,7 @@ def edit_page(edit):
     
     """Add editor head html
     """
+
     return '''
     &lt;br /&gt;
 &lt;!--&lt;script src="//cdn.tinymce.com/4/tinymce.min.js"&gt;&lt;/script&gt;--&gt;
@@ -682,7 +680,11 @@ def checkLogin():
     """
 
     password = request.form["password"]
-    site_title, saved_password = parse_config()
+    # for Replit, need to setup on the secrets tab for key "config"
+    if os.getenv("config") != None:
+        saved_password = os.getenv("config")
+    else:
+        site_title, saved_password = parse_config()
     hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
     if hashed_password == saved_password:
         # 為了讓多 cmsimde 可以在同一個瀏覽器共存, 因此讓每一個 session 不同
@@ -851,6 +853,8 @@ def generate_pages():
                      directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Generate Pages&lt;/h1&gt;" + \
                      "已經將網站轉為靜態網頁!" + \
                      "&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+
+
 </t>
 <t tx="leo.20190515144237.24"># seperate page need heading and edit variables, if edit=1, system will enter edit mode
 # single page edit will use ssavePage to save content, it means seperate save page
@@ -921,20 +925,9 @@ def get_page(heading, edit):
                     outstring_duplicate += outstring_list[i] + "&lt;br /&gt;&lt;hr&gt;"
                 return outstring_duplicate
             else:
-            #pagedata = "&lt;h"+level[page_order]+"&gt;"+heading+"&lt;/h"+level[page_order]+"&gt;"+search_content(head, page, heading)
-            #outstring = last_page+" "+next_page+"&lt;br /&gt;"+ tinymce_editor(directory, html_escape(pagedata), page_order)
                 return outstring
 
 
-# seperate page need heading and edit variables, if edit=1, system will enter edit mode
-# single page edit will use ssavePage to save content, it means seperate save page
-'''
-@app.route('/get_page2')
-@app.route('/get_page2/&lt;heading&gt;', defaults={'edit': 0})
-@app.route('/get_page2/&lt;heading&gt;/&lt;int:edit&gt;')
-'''
-# before add tipue search function
-#def get_page2(heading, head, edit):
 </t>
 <t tx="leo.20190515144237.26">@app.route('/image_delete_file', methods=['POST'])
 def image_delete_file():
@@ -964,7 +957,6 @@ def image_delete_file():
             outstring += filename[index] + "&lt;input type='hidden' name='filename' value='" + \
                               filename[index] + "'&gt;&lt;br /&gt;"
     outstring += "&lt;br /&gt;&lt;input type='submit' value='delete'&gt;&lt;/form&gt;"
-
     return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
              directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Download List&lt;/h1&gt;" + \
              outstring + "&lt;br/&gt;&lt;br /&gt;&lt;/body&gt;&lt;/html&gt;"
@@ -997,10 +989,8 @@ def image_doDelete():
                 outstring += filename[index] + " deleted!&lt;br /&gt;"
             except:
                 outstring += filename[index] + "Error, can not delete files!&lt;br /&gt;"
-
     head, level, page = parse_content()
     directory = render_menu(head, level, page)
-
     return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;" + \
              directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Image List&lt;/h1&gt;" + \
              outstring + "&lt;br/&gt;&lt;br /&gt;&lt;/body&gt;&lt;/html&gt;"
@@ -1573,7 +1563,7 @@ def download():
     if type == "files":
         return send_from_directory(download_dir, filename=filename)
     else:
-    # for image files
+        # for image files
         return send_from_directory(image_dir, filename=filename)
 
 
@@ -1775,6 +1765,7 @@ def downloads(path):
 
     return send_from_directory(_curdir+"/downloads/", path)
 
+
 </t>
 <t tx="leo.20190515144238.1">def loadlist_access_list(files, starti, endi, filedir):
 
@@ -1877,28 +1868,6 @@ def savePage():
     return redirect("/edit_page")
 
 
-# use head title to search page content
-'''
-# search_content(head, page, search)
-# 從 head 與 page 數列中, 以 search 關鍵字進行查詢
-# 原先傳回與 search 關鍵字頁面對應的頁面內容
-# 現在則傳回多重的頁面次序與頁面內容數列
-find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
-head = ["標題一","標題二","標題三","標題一","標題四","標題五"]
-search_result = find(head,["標題一"])[0]
-page_order = []
-page_content = []
-for i in range(len(search_result)):
-    # 印出次序
-    page_order.append(search_result[i])
-    # 標題為 head[search_result[i]]
-    #  頁面內容則為 page[search_result[i]]
-    page_content.append(page[search_result[i]])
-    # 從 page[次序] 印出頁面內容
-# 準備傳回 page_order 與 page_content 等兩個數列
-'''
-
-
 </t>
 <t tx="leo.20190515144238.12">def search_content(head, page, search):
 
@@ -1948,7 +1917,9 @@ def send_file(path):
 
     """Send file function
     """
+    
     return app.send_static_file(static_dir + path)
+
 
 </t>
 <t tx="leo.20190515144238.15">@app.route('/images/&lt;path:path&gt;')
@@ -2031,7 +2002,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
 &lt;/ul&gt;
@@ -2108,7 +2079,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
             outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     else:
         outstring += '''
@@ -2237,6 +2208,8 @@ def login():
         &lt;br /&gt;Powered by &lt;a href='http://cmsimple.cycu.org'&gt;CMSimply&lt;/a&gt; \
         &lt;/footer&gt; \
         &lt;/body&gt;&lt;/html&gt;"
+
+
 </t>
 <t tx="leo.20190515144238.21">@app.route('/sitemap', defaults={'edit': 1})
 @app.route('/sitemap/&lt;path:edit&gt;')
@@ -2380,6 +2353,7 @@ def ssavePage():
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushPhp.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushPowerShell.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushLua.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushMojo.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushCpp.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushCss.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="/static/syntaxhighlighter/shBrushCSharp.js"&gt;&lt;/script&gt;
@@ -2424,6 +2398,7 @@ img.add_border {
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushPhp.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushPowerShell.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushLua.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushMojo.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushCpp.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushCss.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="./../cmsimde/static/syntaxhighlighter/shBrushCSharp.js"&gt;&lt;/script&gt;
@@ -2733,6 +2708,7 @@ def logout():
 
     return soup
 
+
 </t>
 <t tx="leo.20190515144238.6">def parse_content():
 
@@ -2824,9 +2800,9 @@ def logout():
 
 </t>
 <t tx="leo.20190515144238.7">def render_menu(head, level, page, sitemap=0):
-
+    
     """允許使用者在 h1 標題後直接加上 h3 標題, 或者隨後納入 h4 之後作為標題標註
-     """
+    """
 
     directory = ""
     # 從 level 數列第一個元素作為開端
@@ -3334,28 +3310,7 @@ edit all 將會無視編輯期間, 原有 content.htm 已被改版的內容, 在
 
 從動態轉為靜態時必須將 H1, H2 或 H3 以 &lt;!-- --&gt; 寫在標題行下, 以便讓靜態網頁可以再轉回動態網頁.
 </t>
-<t tx="leo.20201127112424.1"># for merging two lists and preserve the duplicated elements
-'''
-def merge_sequences(seq1,seq2):
-    sm=SequenceMatcher(a=seq1,b=seq2)
-    res = []
-    for (op, start1, end1, start2, end2) in sm.get_opcodes():
-        if op == 'equal' or op=='delete':
-            #This range appears in both sequences, or only in the first one.
-            res += seq1[start1:end1]
-        elif op == 'insert':
-            #This range appears in only the second sequence.
-            res += seq2[start2:end2]
-        elif op == 'replace':
-            #There are different ranges in each sequence - add both.
-            res += seq1[start1:end1]
-            res += seq2[start2:end2]
-    return res
-
-'''
-
-
-def merge_sequences(list1, list2):
+<t tx="leo.20201127112424.1">def merge_sequences(list1, list2):
 
     """Merge sequences
     """
@@ -3483,18 +3438,22 @@ http_server.serve_forever()</t>
     """get the correct url for http and https edit mode
         to replace original request.url under set_admin_css, set_css and set_footer
     """
+
     url = request.url
     if request.is_secure:
         return url
     else:
         url = url.replace("http://", "https://", 1)
         return url
+
+
 </t>
 <t tx="leo.20221017090913.1">@app.route('/acpform')
 def acpform():
     
     """acp form routine
     """
+
     head, level, page = parse_content()
     directory = render_menu(head, level, page)
     if not isAdmin():
@@ -3509,6 +3468,8 @@ def acpform():
                 Commit Messages:&lt;textarea name='commit' rows='1' cols='80'&gt;&lt;/textarea&gt; \
     &lt;input type='submit' value='acp'&gt;&lt;/form&gt; \
     &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
+
+
 </t>
 <t tx="leo.20221017090933.1">@app.route('/doAcp', methods=['POST'])
 def doAcp():
@@ -3530,8 +3491,6 @@ def doAcp():
 
         return set_css() + "&lt;div class='container'&gt;&lt;nav&gt;"+ \
                    directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Acp done&lt;/h1&gt;Acp done&lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
-
-
 
 
 </t>
@@ -3565,20 +3524,25 @@ jQuery AXuploader.js 是一個使用 jQuery 實現的檔案上傳 plugin。下�
 
 總體而言，jQuery AXuploader.js 的程式架構比較清晰，使用了常見的 jQuery 和 AJAX 技術，同時對上傳過程中的各個階段都做了良好的處理，使得整個上傳過程變得更加穩定和易用。</t>
 <t tx="leo.20230616173643.1">def remove_special_characters(text):
-    """
-    Removes special characters from the given text.
+    
+    """Removes special characters from the given text.
     """
     # Define the set of special characters to remove
     special_chars = ['!', '@', '#', '$', '%', '^', '&amp;', '*', '(', ')', '+', '=', '[', ']', '{', '}', '|', '\\', '/',
                      ':', ';', '&lt;', '&gt;', ',', '.', '?', '`', '~', "'", '"']
-
     # Remove special characters from the text
     cleaned_text = ''.join(char for char in text if char not in special_chars)
 
     return cleaned_text
+
+
 </t>
 <t tx="leo.20230618074447.1">@app.route('/markdown_form', methods=['GET'])
 def markdown_form():
+
+    """Web-based markdown file edit form
+    """
+
     if isAdmin():
         try:
             file_to_edit = request.args.get('file')
@@ -3643,9 +3607,16 @@ Solid Edge
            directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Markdown form&lt;/h1&gt;" + \
            outstring + "&lt;/body&gt;&lt;/html&gt;"
     else:
-        return redirect("/login")</t>
+        return redirect("/login")
+
+
+</t>
 <t tx="leo.20230618074505.1">@app.route('/markdown_action', methods=['POST'])
 def markdown_action():
+  
+    """Action for markdown_form
+    """
+  
     if isAdmin():
         import html
         markdown_dir = _curdir + "/markdown/"
@@ -3669,9 +3640,16 @@ def markdown_action():
                    directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Markdown saved&lt;/h1&gt;" + \
                    filename + " saved!&lt;br/&gt;&lt;br /&gt;&lt;a href='/local_blog'&gt;local_blog&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;"
     else:
-        return redirect("/login")</t>
+        return redirect("/login")
+
+
+</t>
 <t tx="leo.20230618074524.1">@app.route('/local_blog')
 def local_blog():
+
+    """Generate local blog files from markdown directory
+    """
+
     if isAdmin():
         os.system("pelican markdown -o blog -s local_publishconf.py")
         head, level, page = parse_content()
@@ -3681,8 +3659,15 @@ def local_blog():
                    directory + "&lt;/nav&gt;&lt;section&gt;&lt;h1&gt;Local blog generated&lt;/h1&gt;" + \
                    "Blog generated!&lt;br/&gt;&lt;br /&gt;&lt;/body&gt;&lt;/html&gt;"
     else:
-        return redirect("/login")</t>
+        return redirect("/login")
+
+
+</t>
 <t tx="leo.20230618112821.1">def get_wan_address():
+
+    """get wide area network address
+    """
+  
     try:
         ipv4_address = get_wan_ipv4_address()
         if ipv4_address:
@@ -3695,8 +3680,13 @@ def local_blog():
         pass
 
     return 'localhost'
+
+
 </t>
 <t tx="leo.20230618112906.1">def get_wan_ipv4_address():
+
+    """get IPv4 wide area network address
+    """
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(("8.8.8.8", 80))  # Use Google Public DNS as the external host
@@ -3705,8 +3695,14 @@ def local_blog():
         return ip_address
     except socket.error:
         return None
+
+
 </t>
 <t tx="leo.20230618112935.1">def get_wan_ipv6_address():
+
+    """get IPv6 wide area network address
+    """
+
     try:
         sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
         sock.connect(("2001:4860:4860::8888", 80))  # Use Google Public DNS as the external host
@@ -3714,7 +3710,10 @@ def local_blog():
         sock.close()
         return ip_address
     except socket.error:
-        return None</t>
+        return None
+
+
+</t>
 <t tx="leo.20230618120553.1">2023.06.16-06.21
 
 allow us /markdown_form 線上新增或修改網誌 markdown 檔案內容並進行轉檔
@@ -3726,6 +3725,7 @@ allow us /markdown_form 線上新增或修改網誌 markdown 檔案內容並進�
 
     """Use LaTeX Equation rendering
     """
+
     outstring = '''
 &lt;!-- 啟用 LaTeX equations 編輯 --&gt;
   &lt;!-- &lt;script&gt;
@@ -3746,6 +3746,8 @@ def favicon():
     """
 
     return send_from_directory(_curdir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 </t>
 <t tx="yen.20210707134934.1"># 因為需要在 download 中導入其他 brython .py 模組, 因此刪除 ]
 
@@ -3767,6 +3769,7 @@ password_generator() 函式需要 random 與 string 模組.
 
     """Generate random password
     """
+
     return ''.join(random.choice(chars) for _ in range(size))
 
 
@@ -3897,8 +3900,6 @@ token = password_generator()
                     outstring_duplicate += outstring_list[i] + "&lt;br /&gt;&lt;hr&gt;"
                 return outstring_duplicate
             else:
-            #pagedata = "&lt;h" + level[page_order]+"&gt;" + heading + "&lt;/h" + level[page_order] + "&gt;" + search_content(head, page, heading)
-            #outstring = last_page + " " + next_page + "&lt;br /&gt;" + tinymce_editor(directory, html_escape(pagedata), page_order)
                 return outstring
 
 
@@ -3908,10 +3909,8 @@ token = password_generator()
 本次 2021.07.10 要將用戶選用的標題中特殊符號予以移除</t>
 <t tx="yen.20210906215717.1">@app.route('/start_static/')
 def start_static():
-
-    """Start local static server
-	"""
-
+    """Start local static server in http"""
+    
     if isAdmin():
         server_address = get_wan_address() or 'localhost'
         server_port = static_port
@@ -3929,16 +3928,12 @@ def start_static():
         else:
             httpd.socket.bind((server_address, server_port))
 
-        httpd.socket = ssl.wrap_socket(httpd.socket,
-                                       server_side=True,
-                                       certfile='./localhost.crt',
-                                       keyfile='./localhost.key',
-                                       ssl_version=ssl.PROTOCOL_TLSv1_2)
-
         httpd.server_activate()
         httpd.serve_forever()
     else:
         return redirect("/login")
+
+
 </t>
 </tnodes>
 </leo_file>
