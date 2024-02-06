@@ -173,8 +173,9 @@ def correct_url():
     """get the correct url for http and https edit mode
         to replace original request.url under set_admin_css, set_css and set_footer
     """
-
-    url = request.url
+    # fix the following in order to work in codespaces
+    #url = request.url
+    url = request.script_root + request.path
     if request.is_secure:
         return url
     else:
