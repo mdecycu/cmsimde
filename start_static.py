@@ -4,6 +4,8 @@ import threading
 import sys
 import os
 
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+
 httpd = None
 
 def get_wan_address():
