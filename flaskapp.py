@@ -1078,6 +1078,8 @@ def get_page2(heading, head, edit, get_page_content = None):
 
     page = [w.replace('src="/images/', 'src="./../images/') for w in page]
     page = [w.replace('href="/downloads/', 'href="./../downloads/') for w in page]
+    # 配合 object 標註導入 svg data 來源的轉換
+    page = [w.replace('data="/images/', 'data="./../images/') for w in page]
     # 假如有 src="/static/ace/ 則換為 src="./../static/ace/
     page = [w.replace('src="/static/', 'src="./../cmsimde/static/') for w in page]
     # 假如有 src=/downloads 則換為 src=./../../downloads
