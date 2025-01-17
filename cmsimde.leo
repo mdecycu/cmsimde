@@ -24,6 +24,7 @@
 <v t="leo.20230426202726.1"><vh>202304 註記</vh></v>
 <v t="leo.20230618120553.1"><vh>202306 Covid19</vh></v>
 <v t="leo.20241228221456.1"><vh>20241228 修改</vh></v>
+<v t="leo.20250117153955.1"><vh>20250117 修改</vh></v>
 </v>
 <v t="leo.20190515144242.1"><vh>@clean wsgi.py</vh>
 <v t="leo.20190515144254.1"><vh>Declarations (wsgi.py)</vh></v>
@@ -7488,6 +7489,9 @@ import string
 
 # for start_static to get wan address
 import socket
+# for start_static to use https
+import ssl
+from pathlib import Path
 
 # 由 init.py 中的 uwsgi = False 或 True 決定在 uwsgi 模式或近端模式執行
 
@@ -9135,11 +9139,8 @@ def send_static():
     """Set css for admin
     """
 
-    server_ip = get_wan_address() or 'localhost'
-    if "." in server_ip:
-        server_address = str(server_ip) + ":" + str(static_port)
-    else:
-        server_address = "[" + str(server_ip) + "]:" + str(static_port)
+    server_ip = 'localhost'
+    server_address = str(server_ip) + ":" + str(static_port)
 
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
@@ -9188,7 +9189,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
         outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://'''+ server_address + '''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     outstring += '''
 &lt;/ul&gt;
@@ -9202,12 +9203,10 @@ window.location= 'https://' + location.host + location.pathname + location.searc
 
     """Set css for dynamic site
     """
-
-    server_ip = get_wan_address() or 'localhost'
-    if "." in server_ip:
-        server_address = str(server_ip) + ":" + str(static_port)
-    else:
-        server_address = "[" + str(server_ip) + "]:" + str(static_port)
+    
+    # use https://localhost:static_port for static site after start_static starting
+    server_ip = 'localhost'
+    server_address = str(server_ip) + ":" + str(static_port)
 
     outstring = '''&lt;!doctype html&gt;
 &lt;html&gt;&lt;head&gt;
@@ -9265,7 +9264,7 @@ window.location= 'https://' + location.host + location.pathname + location.searc
             outstring += '''
 &lt;li&gt;&lt;a href="/acpform"&gt;acp&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/start_static/"&gt;SStatic&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="http://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://''' + server_address +'''"&gt;''' + str(static_port) + '''&lt;/a&gt;&lt;/li&gt;
 '''
     else:
         outstring += '''
@@ -64984,6 +64983,7 @@ offset += node.nodeValue.length;
     
     # 配合 object 標註導入 svg data 來源的轉換
     page = [w.replace('data="/images/', 'data="./../images/') for w in page]</t>
+<t tx="leo.20250117153955.1">將原先使用 wan start_static 的 http 連線改為 https://localhost:static_port</t>
 <t tx="yen.20200710111924.1">def checkMath():
 
     """Use LaTeX Equation rendering
@@ -65174,31 +65174,50 @@ token = password_generator()
 本次 2021.07.10 要將用戶選用的標題中特殊符號予以移除</t>
 <t tx="yen.20210906215717.1">@app.route('/start_static/')
 def start_static():
-    """Start local static server in http"""
+    """Start local static server in https"""
     
     if isAdmin():
-        server_address = get_wan_address() or 'localhost'
-        server_port = static_port
-
-        # Determine address family based on server_address
-        address_family = socket.AF_INET if ':' not in server_address else socket.AF_INET6
-
-        httpd = http.server.HTTPServer((server_address, server_port), http.server.SimpleHTTPRequestHandler, bind_and_activate=False)
-        httpd.socket = socket.socket(address_family, socket.SOCK_STREAM)
-        httpd.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        if address_family == socket.AF_INET6:
-            httpd.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-            httpd.socket.bind((server_address, server_port, 0, 0))
-        else:
+        try:
+            server_address = 'localhost'
+            server_port = static_port
+            address_family = socket.AF_INET
+            
+            # 創建 SSL context
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl_context.load_cert_chain(
+                certfile='cert.pem',
+                keyfile='key.pem'
+            )
+            
+            # 設定 HTTPS server
+            httpd = http.server.HTTPServer(
+                (server_address, server_port),
+                http.server.SimpleHTTPRequestHandler,
+                bind_and_activate=False
+            )
+            
+            # 創建 socket 並套用 SSL
+            httpd.socket = socket.socket(address_family, socket.SOCK_STREAM)
+            httpd.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            httpd.socket = ssl_context.wrap_socket(
+                httpd.socket,
+                server_side=True
+            )
+            
+            # 綁定並啟動 server
             httpd.socket.bind((server_address, server_port))
-
-        httpd.server_activate()
-        httpd.serve_forever()
+            httpd.server_activate()
+            
+            print(f"HTTPS Server started at https://{server_address}:{server_port}")
+            httpd.serve_forever()
+            
+        except ssl.SSLError as e:
+            print(f"SSL Error: {e}")
+            return "SSL configuration error", 500
+        except Exception as e:
+            print(f"Server Error: {e}")
+            return "Server error", 500
     else:
-        return redirect("/login")
-
-
-</t>
+        return redirect("/login")</t>
 </tnodes>
 </leo_file>
