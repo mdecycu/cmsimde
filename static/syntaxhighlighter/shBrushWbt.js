@@ -6,12 +6,17 @@
     function Brush()
     {
         // Webots node types
-        var nodes = 'Robot Supervisor DifferentialWheels Accelerometer Brake Camera Compass ' +
-                   'Connector DistanceSensor Emitter GPS Gyro InertialUnit LED LightSensor ' +
-                   'LinearMotor Motor PositionSensor Receiver TouchSensor Track world ' +
-                   'WorldInfo Viewpoint Shape Transform Group Material Appearance Box Sphere ' +
-                   'Cylinder Cone IndexedFaceSet Coordinate PointSet Color ImageTexture ' +
-                   'DirectionalLight PointLight SpotLight Background';
+        var nodes = 'WorldInfo Viewpoint Background DirectionalLight PointLight SpotLight Group ' +
+                   'Transform Shape Material Appearance PBRAppearance ImageTexture TextureTransform '+
+                   'Robot Solid Accelerometer Brake Camera Compass Connector Display ' +
+                   'DistanceSensor Emitter GPS Gyro InertialUnit LED LightSensor LinearMotor ' +
+                   'Motor Pen Position2D PositionSensor Propeller Radar RangeFinder Receiver' + 
+                   'Speaker TouchSensor Track VacuumGripper Physics BoundingObject Box Capsule ' +
+                   'Cylinder ElevationGrid IndexedFaceSet Plane Sphere HingeJoint Hinge2Joint BallJoint ' +
+                   'SliderJoint Normal Color Coordinate Fog Focus LensFlare Lidar Muscle ' + 
+                   'Charger CadShape ConveyorBelt Skin ContactProperties Damping FocalPoint ' +
+                   'Field MetalAxis MetalParts ParabolicReflector ParaboloidMesh Altimeter ' +
+                   'Microphone';
 
         // Webots controller API functions
         var functions = 'wb_robot_init wb_robot_step wb_robot_cleanup ' +
